@@ -1,0 +1,31 @@
+a {
+	color: blueviolet;
+}
+
+body {
+    background: white url("/static/images/background.jpg") no-repeat;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+
+    font-family: 'Ubuntu';
+    font-size: 10px;
+
+    margin: 0px;
+    height: 100vh;
+}
+
+header {
+    border-bottom: 1px solid #999;
+    margin-bottom: 2rem;
+}
+
+a:hover {
+    color: silver;
+}
+
+footer {
+    bottom:0;
+    width:100%;
+    height:60px;
+}
