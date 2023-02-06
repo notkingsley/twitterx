@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}
+Login to TwitterX
+{% endblock title %}
+
+{% block content %}
+<form method="post" action="{% url 'users:login' %}" style="text-align: center;">
+	{% csrf_token %}
+	<table style="margin: auto;">
+		{{ form.as_table }}
+	</table>
+	<input type="submit" value="Login">
+</form>
+{% endblock content %}

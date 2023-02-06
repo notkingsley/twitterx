@@ -5,5 +5,29 @@
 {% endblock title %}
 
 {% block content %}
-hi
+<div class="centralize">
+	<div style="height: 5vh;" role="heading">
+		<h2>
+			{{ user.first_name }}
+		</h2>
+	</div>
+	<div role="main" style="height: 100%;">
+		<div id="details" style="height: 10vh;">
+			<div id="full-name">
+				{{ user.get_full_name }}
+			</div>
+			<div id="username">
+				{{ user }}
+			</div>
+			<div id="joined" style="text-align: right;">
+				Joined {{ user.date_joined|date:"F, Y" }}
+			</div>
+		</div>
+		<div id="tweets">
+			<h4>
+				Tweets will go here.
+			</h4>
+		</div>
+	</div>
+</div>
 {% endblock content %}
