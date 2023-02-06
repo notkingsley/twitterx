@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     "twitterx.apps.TwitterxConfig",
+    "users.apps.UsersConfig",
 ]
 
 MIDDLEWARE = [
@@ -131,4 +132,4 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-AUTH_USER_MODEL = 'twitterx.User'
+AUTH_USER_MODEL = 'users.User'
