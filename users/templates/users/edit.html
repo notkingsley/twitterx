@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}
+Edit {{ request.user }}'s info
+{% endblock title %}
+
+{% block content %}
+<div id="edit-profile" style="margin: auto;">
+	<p style="text-align: center; padding-bottom: 5%;">
+		<h3>
+			Edit your profile details
+		</h3>
+		<p>
+			Each profile update is charged at one soul each
+		</p>
+	</p>
+	</br>
+	<div id="form-table">
+		<form action="{% url 'users:edit' %}" method="post">
+			{% csrf_token %}
+			<table>
+				{{ form.as_table }}
+			</table>
+			</br>
+			<div>
+				<div style="text-align: center; float: left; width: 50%;">
+					<a href="{% url 'users:delete' %}" class="btn btn-outline-danger">
+						Delete my account
+					</a>
+				</div>
+				<div style="text-align: center; float: right; width: 50%;">
+					<div style="margin: auto; text-align: center;" id="submit" class="centralize">
+						<input type="submit" value="Update details" class="btn btn-primary">
+					</div>
+				</div>
+				<div style="clear: both;"></div>
+			</div>
+		</form>
+	</div>
+</div>
+{% endblock content %}

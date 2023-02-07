@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}
+Confirm Delete?
+{% endblock title %}
+
+{% block content %}
+<div id="delete-profile" style="margin: auto;">
+	<h3 style="text-align: center;">
+		Are you sure?
+	</h3>
+	<h4>
+		<p>
+			This will delete your account and tweets, it is irreversible and there will be no soul refunds.
+		</p>
+	</h4>
+	<p style="text-align: center;">
+		Please enter {{ request.user }} to continue
+	</p>
+	<div style="margin: auto; text-align: center;" id="submit" class="centralize">
+		<form action="{% url 'users:delete' %}" method="post">
+			{% csrf_token %}
+			{{ form.as_div }}
+			<br>
+			<input type="submit" value="Yes, wipe everything." class="btn btn-danger">
+		</form>
+	</div>
+</div>
+{% endblock content %}
