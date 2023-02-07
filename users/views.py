@@ -70,3 +70,12 @@ class DeleteProfile(mixins.LoginRequiredMixin, generic.DeleteView):
 	def form_valid(self, form):
 		logout(self.request)
 		return super().form_valid(form)
+
+
+class PasswordChangeView(auth_views.PasswordChangeView):
+	template_name: str = "users/password_change.html"
+	success_url = reverse_lazy("users:password_change_done")
+
+
+class PasswordChangeDoneView(auth_views.PasswordChangeDoneView):
+	template_name: str = "users/password_change_done.html"

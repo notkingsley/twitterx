@@ -22,20 +22,32 @@ Edit {{ request.user }}'s info
 				{{ form.as_table }}
 			</table>
 			</br>
-			<div>
-				<div style="text-align: center; float: left; width: 50%;">
-					<a href="{% url 'users:delete' %}" class="btn btn-outline-danger">
-						Delete my account
-					</a>
-				</div>
-				<div style="text-align: center; float: right; width: 50%;">
-					<div style="margin: auto; text-align: center;" id="submit" class="centralize">
+			<div class="container text-center" style="margin: auto;">
+				<div class="row">
+					<div class="col-8">
 						<input type="submit" value="Update details" class="btn btn-primary">
 					</div>
 				</div>
-				<div style="clear: both;"></div>
 			</div>
 		</form>
+	</div>
+	<hr>
+	<div class="container text-center" id="settings">
+		<p>
+			Other settings
+		</p>
+		<div class="row">
+			<div class="col">
+				<a href="{% url 'users:delete' %}" class="btn btn-outline-danger text-nowrap">
+					Delete my account
+				</a>
+			</div>
+			<div class="col">
+				<a href="{% url 'users:password_change' %}" class="btn btn-outline-primary">
+					Change password
+				</a>
+			</div>
+		</div>
 	</div>
 </div>
 {% endblock content %}
