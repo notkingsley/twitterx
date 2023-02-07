@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% load form_tags %}
+
 {% block title %}
 Edit {{ request.user }}'s info
 {% endblock title %}
@@ -18,9 +20,19 @@ Edit {{ request.user }}'s info
 	<div id="form-table">
 		<form action="{% url 'users:edit' %}" method="post">
 			{% csrf_token %}
-			<table>
-				{{ form.as_table }}
-			</table>
+			{% for field in form %}
+			<div class="form-group row">
+				<div for="{{ field.label }}" class="col-sm-2 col-form-label">
+					{{ field.label_tag }}
+				</div>
+				<div class="col-sm-10">
+					{{ field|add_classes:'form-control'}}
+					{% if field.help_text %}
+						<small class="form-text text-muted">{{ field.help_text }}</small>
+					{% endif %}
+				</div>
+			</div>
+			{% endfor %}
 			</br>
 			<div class="container text-center" style="margin: auto;">
 				<div class="row">

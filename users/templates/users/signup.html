@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% load form_tags %}
+
 {% block title %}
 Signup
 {% endblock title %}
@@ -20,10 +22,20 @@ Signup
 	</br>
 	<div id="form-table">
 		<form action="{% url 'users:signup' %}" method="post">
-			<table>
-				{% csrf_token %}
-				{{ form.as_table }}
-			</table>
+			{% csrf_token %}
+			{% for field in form %}
+			<div class="form-group row">
+				<div for="{{ field.label }}" class="col-sm-2 col-form-label">
+					{{ field.label_tag }}
+				</div>
+				<div class="col-sm-10">
+					{{ field|add_classes:'form-control'}}
+					{% if field.help_text %}
+						<small class="form-text text-muted">{{ field.help_text }}</small>
+					{% endif %}
+				</div>
+			</div>
+			{% endfor %}
 			</br>
 			<div style="margin: auto; text-align: center;" id="submit" class="centralize">
 				<input type="submit" value="Sign up" class="btn btn-primary">

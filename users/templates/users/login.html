@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% load form_tags %}
+
 {% block title %}
 Login to TwitterX
 {% endblock title %}
@@ -9,9 +11,19 @@ Login to TwitterX
 	<div id="login" style="height: 40%;">
 		<form method="post" action="{% url 'users:login' %}" style="text-align: center;">
 			{% csrf_token %}
-			<table style="margin: auto;">
-				{{ form.as_table }}
-			</table>
+			{% for field in form %}
+			<div class="form-group row" style="margin: auto; width: 40%;">
+				<div for="{{ field.label }}" class="col-sm-2 col-form-label">
+					{{ field.label_tag }}
+				</div>
+				<div class="col-sm-10">
+					{{ field|add_classes:'form-control'}}
+					{% if field.help_text %}
+						<small class="form-text text-muted">{{ field.help_text }}</small>
+					{% endif %}
+				</div>
+			</div>
+			{% endfor %}
 			<br>
 			<input type="hidden" name="r" value="{{ r }}">
 			<input type="submit" value="Login" class="btn btn-primary">

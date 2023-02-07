@@ -147,18 +147,18 @@
 		<div class="footer fixed-bottom">
 			<footer>
 				{% block footer %}
-				<div style="text-align: center;">
-					<a href="{% url 'twitterx:home' %}">
-						Go to Home page
-					</a>
-					| 
-					<a href="{% url 'twitterx:about' %}">
-						About Us
-					</a>
-					| 
-					<a href="{% url 'twitterx:privacy' %}">
-						Privacy Policy
-					</a>
+				<div class="container" style="margin: auto; width: 25%;">
+					<div class="btn-group" role="group" style="margin: auto;">
+						<a href="{% url 'twitterx:home' %}" class="btn btn-primary text-nowrap">
+							Go to Home page
+						</a>
+						<a href="{% url 'twitterx:about' %}" class="btn btn-primary text-nowrap">
+							About Us
+						</a>
+						<a href="{% url 'twitterx:privacy' %}" class="btn btn-primary text-nowrap">
+							Privacy Policy
+						</a>
+					</div>
 				</div>
 				{% endblock footer %}
 			</footer>
