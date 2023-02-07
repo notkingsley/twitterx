@@ -2,8 +2,7 @@ from django.views import generic
 from django.contrib.auth import login, logout, mixins, views as auth_views
 from django.urls import reverse_lazy
 
-from . import models
-from . import forms
+from . import forms, models
 
 # TODO accept login by email
 
@@ -25,6 +24,16 @@ class LoginView(auth_views.LoginView):
 	template_name: str = "users/login.html"
 	next_page = HOMEPAGE
 	redirect_field_name = REDIRECT_FIELD_NAME
+
+	def post(self, request, *args, **kwargs):
+		try:
+			user = models.User.objects.get(email= request.POST.get("username", ""))
+			post = request.POST.copy()
+			post["username"] = user.username
+			request.POST = post
+		except models.User.DoesNotExist:
+			pass
+		return super().post(request, *args, **kwargs)
 
 
 class LogoutView(auth_views.LogoutView):

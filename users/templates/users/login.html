@@ -11,6 +11,9 @@ Login to TwitterX
 	<div id="login" style="height: 40%;">
 		<form method="post" action="{% url 'users:login' %}" style="text-align: center;">
 			{% csrf_token %}
+			<p>
+				Enter username or email
+			</p>
 			{% for field in form %}
 			<div class="form-group row" style="margin: auto; width: 40%;">
 				<div for="{{ field.label }}" class="col-sm-2 col-form-label">
