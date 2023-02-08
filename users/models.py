@@ -4,11 +4,15 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser, _
 from django.urls import reverse
 
-# TODO disallow @ . and + in usernames 
-# TODO disallow usernames less than 3 letter
+from . import validators
+
 # TODO add a profile picture
 
 class User(AbstractUser):
+
+	username_validator = validators.UsernameValidator()
+	name_validator = validators.NameValidator()
+
 	id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 	
 	username = models.CharField(
@@ -16,9 +20,9 @@ class User(AbstractUser):
 		max_length=150,
 		unique=True,
 		help_text=_(
-			"Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only."
+			"Required. 3 to 63 characters. Letters, digits and underscore only."
 		),
-		validators=[AbstractUser.username_validator],
+		validators= [username_validator],
 		error_messages={
 			"unique": _("That username is already in use"),
 		},
@@ -32,8 +36,17 @@ class User(AbstractUser):
 		},
 	)
 
-	first_name = models.CharField(_("first name"), max_length=150)
-	last_name = models.CharField(_("last name"), max_length=150)
+	first_name = models.CharField(
+		_("first name"), 
+		max_length=150,
+		validators= [name_validator],
+	)
+
+	last_name = models.CharField(
+		_("last name"), 
+		max_length=150,
+		validators= [name_validator],
+	)
 
 	follows = models.ManyToManyField(
 		"self",

@@ -5,7 +5,7 @@ from django import http
 
 from . import forms, models
 
-# TODO accept login by email
+# TODO fix invalid form data leaking to template context in EditProfile
 
 HOMEPAGE = reverse_lazy("twitterx:home")
 
