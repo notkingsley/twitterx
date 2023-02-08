@@ -35,6 +35,12 @@ class User(AbstractUser):
 	first_name = models.CharField(_("first name"), max_length=150)
 	last_name = models.CharField(_("last name"), max_length=150)
 
+	follows = models.ManyToManyField(
+		"self",
+		"followers",
+		symmetrical= False,
+	)
+
 	def __str__(self) -> str:
 		return f"@{self.username}"
 

@@ -19,9 +19,30 @@
 			<div id="username">
 				{{ user }}
 			</div>
+			<div>
+				<p>
+					{% with follower_count=user.followers.all.count %}
+					{{ user.follows.all.count }} following, {{ follower_count }} follower{{ follower_count|pluralize }}.
+					{% endwith %}
+				</p>
+			</div>
 			<div id="joined" style="text-align: right;">
 				Joined {{ user.date_joined|date:"F, Y" }}
 			</div>
+			{% if request.user.is_authenticated and request.user != user %}
+			<form method="post" action="{% url 'users:follow' user.username %}">
+				{% csrf_token %}
+				<div class="d-grid gap-2">
+					<button onclick="follow()" id="follow-button" class="btn btn-primary" type="submit">
+						{% if user in request.user.follows.all %}
+						Unfollow
+						{% else %}
+						Follow
+						{% endif %}
+					</button>
+				</div>
+			</form>
+			{% endif %}
 		</div>
 		<div id="tweets">
 			<h4>

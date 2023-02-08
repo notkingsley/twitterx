@@ -1,6 +1,7 @@
 from django.views import generic
 from django.contrib.auth import login, logout, mixins, views as auth_views
 from django.urls import reverse_lazy
+from django import http
 
 from . import forms, models
 
@@ -108,3 +109,21 @@ class PasswordResetConfirmView(auth_views.PasswordResetConfirmView):
 
 class PasswordResetCompleteView(auth_views.PasswordResetCompleteView):
 	template_name: str = "users/password_reset_complete.html"
+
+
+class FollowView(mixins.LoginRequiredMixin, generic.View):
+
+	def post(self, request, *args, **kwargs):
+		try:
+			user = models.User.objects.get(username= kwargs["username"])
+			if user == request.user:
+				return http.HttpResponseBadRequest()
+
+			if user in request.user.follows.all():
+				request.user.follows.remove(user)
+			else:
+				request.user.follows.add(user)
+			return http.HttpResponse(status= 204)
+			
+		except models.User.DoesNotExist:
+			return http.HttpResponseBadRequest()
