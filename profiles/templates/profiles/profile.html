@@ -30,7 +30,7 @@
 				Joined {{ user.date_joined|date:"F, Y" }}
 			</div>
 			{% if request.user.is_authenticated and request.user != user %}
-			<form method="post" action="{% url 'users:follow' user.username %}">
+			<form method="post" action="{% url 'profiles:follow' user.username %}">
 				{% csrf_token %}
 				<div class="d-grid gap-2">
 					<button onclick="follow()" id="follow-button" class="btn btn-primary" type="submit">

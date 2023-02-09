@@ -20,7 +20,7 @@ Confirm Delete?
 		Please enter {{ request.user }} to continue
 	</p>
 	<div style="margin: auto; text-align: center;" id="submit" class="centralize">
-		<form action="{% url 'users:delete' %}" method="post">
+		<form action="{% url 'posts:delete' %}" method="post">
 			{% csrf_token %}
 			{% for field in form %}
 			<div class="form-group row">

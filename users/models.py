@@ -2,7 +2,7 @@ import uuid
 
 from django.db import models
 from django.contrib.auth.models import AbstractUser, _
-from django.urls import reverse
+from django.urls import reverse_lazy
 
 from . import validators
 
@@ -65,4 +65,4 @@ class User(AbstractUser):
 
 	
 	def get_absolute_url(self) -> str:
-		return reverse("users:profile", kwargs= {"username": self.username})
+		return reverse_lazy("profiles:profile", kwargs= {"username": self.username})

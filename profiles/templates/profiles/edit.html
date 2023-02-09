@@ -3,31 +3,30 @@
 {% load form_tags %}
 
 {% block title %}
-Edit Picture
+Edit {{ request.user }}'s info
 {% endblock title %}
 
 {% block content %}
 <div id="edit-profile" style="margin: auto;">
 	<p style="text-align: center; padding-bottom: 5%;">
 		<h3>
-			Edit your profile picture
+			Edit your profile details
 		</h3>
 		<p>
-			Each profile picture update is charged at one soul each
+			Each profile update is charged at one soul each
 		</p>
 	</p>
 	</br>
 	<div id="form-table">
-		<form action="{% url 'users:picture' %}" method="post" enctype="multipart/form-data">
+		<form action="{% url 'profiles:edit' %}" method="post">
 			{% csrf_token %}
-			{% with field=form.profile_pic %}
+			{% for field in form %}
 			<div class="form-group row">
 				<div for="{{ field.label }}" class="col-sm-2 col-form-label">
 					{{ field.label_tag }}
 				</div>
 				<div class="col-sm-10">
-					<img class="border border-primary rounded-circle img-fluid" src="{{ request.user.profile_pic.url }}">
-					<input type="file" name="{{ field.label }}" accept="image/*" class="form-control" id="{{ field.label }}">
+					{{ field|add_classes:'form-control'}}
 					{% if field.help_text %}
 					<small class="form-text text-muted">
 						{{ field.help_text }}
@@ -42,12 +41,12 @@ Edit Picture
 					{% endif %}
 				</div>
 			</div>
-			{% endwith %}
+			{% endfor %}
 			</br>
 			<div class="container text-center" style="margin: auto;">
 				<div class="row">
 					<div class="col-8">
-						<input type="submit" value="Update picture." class="btn btn-primary">
+						<input type="submit" value="Update details" class="btn btn-primary">
 					</div>
 				</div>
 			</div>
@@ -60,7 +59,7 @@ Edit Picture
 		</p>
 		<div class="row">
 			<div class="col">
-				<a href="{% url 'users:delete' %}" class="btn btn-outline-danger text-nowrap">
+				<a href="{% url 'profiles:delete' %}" class="btn btn-outline-danger text-nowrap">
 					Delete my account
 				</a>
 			</div>
