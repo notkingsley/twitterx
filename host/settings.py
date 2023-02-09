@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    "profiles.apps.ProfilesConfig",
     "twitterx.apps.TwitterxConfig",
     "users.apps.UsersConfig",
 ]
