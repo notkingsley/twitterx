@@ -3,6 +3,9 @@ from django.contrib.auth import logout, mixins, get_user_model
 from django.urls import reverse_lazy
 from django import http
 
+from PIL import Image
+import numpy as np
+
 from . import forms
 
 # TODO fix invalid form data leaking to template context in EditProfile
@@ -15,6 +18,13 @@ HOMEPAGE = reverse_lazy("twitterx:home")
 LOGIN_URL = reverse_lazy("users:login")
 
 DEFAULT_PROFILE_PICTURE = "profile_pics/default.jpeg"
+
+
+def squash_to_square(file):
+	im = Image.open(file)
+	sqrWidth = np.ceil(np.sqrt(im.size[0]*im.size[1])).astype(int)
+	im_resize = im.resize((sqrWidth, sqrWidth))
+	im_resize.save(file)
 
 
 class ProfileView(generic.DetailView):
@@ -81,6 +91,12 @@ class EditPictureView(mixins.LoginRequiredMixin, generic.UpdateView):
 
 	def get_object(self, queryset= None):
 		return self.request.user
+
+	
+	def form_valid(self, form):
+		ret = super().form_valid(form)
+		squash_to_square(self.request.user.profile_pic.path)
+		return ret
 
 
 class DeletePictureView(mixins.LoginRequiredMixin, generic.View):
