@@ -127,3 +127,12 @@ class FollowView(mixins.LoginRequiredMixin, generic.View):
 			
 		except models.User.DoesNotExist:
 			return http.HttpResponseBadRequest()
+
+
+class EditPictureView(mixins.LoginRequiredMixin, generic.UpdateView):
+	template_name: str = "users/picture.html"
+	fields = ["profile_pic"]
+	login_url = LOGIN_URL
+
+	def get_object(self, queryset= None):
+		return self.request.user

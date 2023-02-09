@@ -6,7 +6,6 @@ from django.urls import reverse
 
 from . import validators
 
-# TODO add a profile picture
 
 class User(AbstractUser):
 
@@ -52,6 +51,13 @@ class User(AbstractUser):
 		"self",
 		"followers",
 		symmetrical= False,
+	)
+
+	profile_pic = models.ImageField(
+		"Profile Picture",
+		name= "profile_pic",
+		upload_to= "profile_pics/%Y/%m/%d",
+		default= "profile_pics/default.jpeg",
 	)
 
 	def __str__(self) -> str:

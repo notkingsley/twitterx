@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% load form_tags %}
+
+{% block title %}
+Edit Picture
+{% endblock title %}
+
+{% block content %}
+<div id="edit-profile" style="margin: auto;">
+	<p style="text-align: center; padding-bottom: 5%;">
+		<h3>
+			Edit your profile picture
+		</h3>
+		<p>
+			Each profile picture update is charged at one soul each
+		</p>
+	</p>
+	</br>
+	<div id="form-table">
+		<form action="{% url 'users:picture' %}" method="post" enctype="multipart/form-data">
+			{% csrf_token %}
+			{% with field=form.profile_pic %}
+			<div class="form-group row">
+				<div for="{{ field.label }}" class="col-sm-2 col-form-label">
+					{{ field.label_tag }}
+				</div>
+				<div class="col-sm-10">
+					<img class="border border-primary rounded-circle img-fluid" src="{{ request.user.profile_pic.url }}">
+					<input type="file" name="{{ field.label }}" accept="image/*" class="form-control" id="{{ field.label }}">
+					{% if field.help_text %}
+					<small class="form-text text-muted">
+						{{ field.help_text }}
+					</small>
+					{% endif %}
+					{% if field.errors %}
+					<small class="form-text text-muted">
+						<div class="text-danger">
+							{{ field.errors }}
+						</div>
+					</small>
+					{% endif %}
+				</div>
+			</div>
+			{% endwith %}
+			</br>
+			<div class="container text-center" style="margin: auto;">
+				<div class="row">
+					<div class="col-8">
+						<input type="submit" value="Update picture." class="btn btn-primary">
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+	<hr>
+	<div class="container text-center" id="settings">
+		<p>
+			Other settings
+		</p>
+		<div class="row">
+			<div class="col">
+				<a href="{% url 'users:delete' %}" class="btn btn-outline-danger text-nowrap">
+					Delete my account
+				</a>
+			</div>
+			<div class="col">
+				<a href="{% url 'users:password_change' %}" class="btn btn-outline-primary">
+					Change password
+				</a>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock content %}
