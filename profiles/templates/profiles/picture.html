@@ -27,7 +27,7 @@ Edit Picture
 				</div>
 				<div class="col-sm-10">
 					<img class="border border-primary rounded-circle img-fluid" src="{{ request.user.profile_pic.url }}">
-					<input type="file" name="{{ field.label }}" accept="image/*" class="form-control" id="{{ field.label }}">
+					<input type="file" name="profile_pic" accept="image/*" class="form-control" id="id_profile_pic">
 					{% if field.help_text %}
 					<small class="form-text text-muted">
 						{{ field.help_text }}
@@ -65,9 +65,15 @@ Edit Picture
 				</a>
 			</div>
 			<div class="col">
-				<a href="{% url 'users:password_change' %}" class="btn btn-outline-primary">
-					Change password
-				</a>
+				<form action="{% url 'profiles:delete_picture' %}" method="post">
+					{% csrf_token %}
+					<input type="submit" value="Delete picture" class="btn btn-danger">
+					<small class="text-muted text-danger">
+						<p>
+							This is IRREVERSIBLE!
+						</p>
+					</small>
+				</form>
 			</div>
 		</div>
 	</div>

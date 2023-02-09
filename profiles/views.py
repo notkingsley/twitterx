@@ -6,12 +6,15 @@ from django import http
 from . import forms
 
 # TODO fix invalid form data leaking to template context in EditProfile
+# TODO add in-ui image cropping and allow only square images
 
 User = get_user_model()
 
 HOMEPAGE = reverse_lazy("twitterx:home")
 
 LOGIN_URL = reverse_lazy("users:login")
+
+DEFAULT_PROFILE_PICTURE = "profile_pics/default.jpeg"
 
 
 class ProfileView(generic.DetailView):
@@ -53,6 +56,7 @@ class DeleteProfile(mixins.LoginRequiredMixin, generic.DeleteView):
 
 
 class FollowView(mixins.LoginRequiredMixin, generic.View):
+	login_url = LOGIN_URL
 
 	def post(self, request, *args, **kwargs):
 		try:
@@ -77,3 +81,16 @@ class EditPictureView(mixins.LoginRequiredMixin, generic.UpdateView):
 
 	def get_object(self, queryset= None):
 		return self.request.user
+
+
+class DeletePictureView(mixins.LoginRequiredMixin, generic.View):
+	login_url = LOGIN_URL
+
+	def delete(self, request, *args, **kwargs):
+		if request.user.profile_pic.name != DEFAULT_PROFILE_PICTURE:
+			request.user.profile_pic.delete()
+			request.user.profile_pic.name = DEFAULT_PROFILE_PICTURE
+			request.user.save()
+		return http.HttpResponseRedirect(request.user.get_absolute_url())
+
+	post = delete
