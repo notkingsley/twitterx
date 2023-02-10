@@ -3,10 +3,7 @@ from django.contrib.auth import logout, mixins, get_user_model
 from django.urls import reverse_lazy
 from django import http
 
-from PIL import Image
-import numpy as np
-
-from . import forms
+from . import forms, image
 
 # TODO fix invalid form data leaking to template context in EditProfile
 # TODO add in-ui image cropping and allow only square images
@@ -17,14 +14,7 @@ HOMEPAGE = reverse_lazy("twitterx:home")
 
 LOGIN_URL = reverse_lazy("users:login")
 
-DEFAULT_PROFILE_PICTURE = "profile_pics/default.jpeg"
-
-
-def squash_to_square(file):
-	im = Image.open(file)
-	sqrWidth = np.ceil(np.sqrt(im.size[0]*im.size[1])).astype(int)
-	im_resize = im.resize((sqrWidth, sqrWidth))
-	im_resize.save(file)
+DEFAULT_PICTURE = "profile_pics/default.jpeg"
 
 
 class ProfileView(generic.DetailView):
@@ -94,18 +84,25 @@ class EditPictureView(mixins.LoginRequiredMixin, generic.UpdateView):
 
 	
 	def form_valid(self, form):
-		ret = super().form_valid(form)
-		squash_to_square(self.request.user.profile_pic.path)
-		return ret
+		if self.request.FILES.get("profile_pic"):
+			
+			user = User.objects.get(pk= self.request.user.pk)
+			if user.profile_pic.name != DEFAULT_PICTURE:
+				user.profile_pic.delete(save= False)
+
+			super().form_valid(form)
+			image.squash_to_square(self.object.profile_pic.path)
+
+		return http.HttpResponseRedirect(self.get_success_url())
 
 
 class DeletePictureView(mixins.LoginRequiredMixin, generic.View):
 	login_url = LOGIN_URL
 
 	def delete(self, request, *args, **kwargs):
-		if request.user.profile_pic.name != DEFAULT_PROFILE_PICTURE:
-			request.user.profile_pic.delete()
-			request.user.profile_pic.name = DEFAULT_PROFILE_PICTURE
+		if request.user.profile_pic.name != DEFAULT_PICTURE:
+			request.user.profile_pic.delete(save= False)
+			request.user.profile_pic.name = DEFAULT_PICTURE
 			request.user.save()
 		return http.HttpResponseRedirect(request.user.get_absolute_url())
 
