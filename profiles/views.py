@@ -17,7 +17,7 @@ LOGIN_URL = reverse_lazy("users:login")
 DEFAULT_PICTURE = "profile_pics/default.jpeg"
 
 
-class ProfileView(generic.DetailView):
+class Profile(generic.DetailView):
 	template_name: str = "profiles/profile.html"
 	model = User
 	slug_field: str = "username"
@@ -55,7 +55,7 @@ class DeleteProfile(mixins.LoginRequiredMixin, generic.DeleteView):
 		return super().form_valid(form)
 
 
-class FollowView(mixins.LoginRequiredMixin, generic.View):
+class Follow(mixins.LoginRequiredMixin, generic.View):
 	login_url = LOGIN_URL
 
 	def post(self, request, *args, **kwargs):
@@ -74,7 +74,7 @@ class FollowView(mixins.LoginRequiredMixin, generic.View):
 			return http.HttpResponseBadRequest()
 
 
-class EditPictureView(mixins.LoginRequiredMixin, generic.UpdateView):
+class EditPicture(mixins.LoginRequiredMixin, generic.UpdateView):
 	template_name: str = "profiles/picture.html"
 	fields = ["profile_pic"]
 	login_url = LOGIN_URL
@@ -85,7 +85,7 @@ class EditPictureView(mixins.LoginRequiredMixin, generic.UpdateView):
 	
 	def form_valid(self, form):
 		if self.request.FILES.get("profile_pic"):
-			
+
 			user = User.objects.get(pk= self.request.user.pk)
 			if user.profile_pic.name != DEFAULT_PICTURE:
 				user.profile_pic.delete(save= False)
@@ -96,7 +96,7 @@ class EditPictureView(mixins.LoginRequiredMixin, generic.UpdateView):
 		return http.HttpResponseRedirect(self.get_success_url())
 
 
-class DeletePictureView(mixins.LoginRequiredMixin, generic.View):
+class DeletePicture(mixins.LoginRequiredMixin, generic.View):
 	login_url = LOGIN_URL
 
 	def delete(self, request, *args, **kwargs):

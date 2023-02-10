@@ -12,24 +12,36 @@
 		</h2>
 	</div>
 	<div role="main" style="height: 100%;">
-		<div id="details" style="height: 10vh;">
-			<div id="full-name">
-				{{ user.get_full_name }}
-			</div>
-			<div id="username">
-				{{ user }}
-			</div>
+		<div id="details" style="height: 30vh;">
 			<div>
-				<p>
-					{% with follower_count=user.followers.all.count %}
-					{{ user.follows.all.count }} following, {{ follower_count }} follower{{ follower_count|pluralize }}.
-					{% endwith %}
-				</p>
-			</div>
-			<div id="joined" style="text-align: right;">
-				Joined {{ user.date_joined|date:"F, Y" }}
+				<div style="width: auto; float: left;">				
+					<div id="full-name">
+						{{ user.get_full_name }}
+					</div>
+					<div id="username">
+						{{ user }}
+					</div>
+					<div>
+						<p>
+							{% with follower_count=user.followers.all.count %}
+							{{ user.follows.all.count }} following, {{ follower_count }} follower{{ follower_count|pluralize }}.
+							{% endwith %}
+						</p>
+					</div>
+					<div id="joined" style="text-align: right;">
+						Joined {{ user.date_joined|date:"F, Y" }}
+					</div>
+				</div>
+				<div style="float: right;">
+					
+					<a href="{% if request.user.is_authenticated and request.user == user %}{% url 'profiles:picture' %}{% endif %}">
+						<img class="border border-primary rounded-circle img-fluid profile" src="{{ user.profile_pic.url }}">
+					</a>
+				</div>
+				<div style="clear: both;"></div>
 			</div>
 			{% if request.user.is_authenticated and request.user != user %}
+			<hr>
 			<form method="post" action="{% url 'profiles:follow' user.username %}">
 				{% csrf_token %}
 				<div class="d-grid gap-2">

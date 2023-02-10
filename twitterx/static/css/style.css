@@ -34,3 +34,8 @@ footer {
     width: 50%;
     margin: auto;
 }
+
+img.profile {
+    width: 150px;
+    height: 150px;
+}

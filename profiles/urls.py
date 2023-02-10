@@ -6,9 +6,9 @@ app_name = "profiles"
 urlpatterns = [
 	path("edit/profile/", views.EditProfile.as_view(), name= "edit"),
 	path("delete/profile/", views.DeleteProfile.as_view(), name= "delete"),
-	path("edit/picture/", views.EditPictureView.as_view(), name= "picture"),
-	path("delete/picture/", views.DeletePictureView.as_view(), name= "delete_picture"),
+	path("edit/picture/", views.EditPicture.as_view(), name= "picture"),
+	path("delete/picture/", views.DeletePicture.as_view(), name= "delete_picture"),
 
-	path("u/<str:username>/", views.ProfileView.as_view(), name= "profile"),
-	path("u/<str:username>/follow/", views.FollowView.as_view(), name= "follow"),
+	path("u/<str:username>/", views.Profile.as_view(), name= "profile"),
+	path("u/<str:username>/follow/", views.Follow.as_view(), name= "follow"),
 ]
