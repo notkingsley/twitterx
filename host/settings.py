@@ -44,6 +44,7 @@ INSTALLED_APPS = [
 
     "profiles.apps.ProfilesConfig",
     "twitterx.apps.TwitterxConfig",
+    "tweets.apps.TweetsConfig",
     "users.apps.UsersConfig",
 ]
 
