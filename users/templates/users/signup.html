@@ -23,28 +23,7 @@ Signup
 	<div id="form-table">
 		<form action="{% url 'users:signup' %}" method="post">
 			{% csrf_token %}
-			{% for field in form %}
-			<div class="form-group row">
-				<div for="{{ field.label }}" class="col-sm-2 col-form-label">
-					{{ field.label_tag }}
-				</div>
-				<div class="col-sm-10">
-					{{ field|add_classes:'form-control'}}
-					{% if field.help_text %}
-						<small class="form-text text-muted">
-							{{ field.help_text }}
-						</small>
-					{% endif %}
-					{% if field.errors %}
-					<small class="form-text text-muted">
-						<div class="text-danger">
-							{{ field.errors }}
-						</div>
-					</small>
-					{% endif %}
-				</div>
-			</div>
-			{% endfor %}
+			{% render_bootstrap_form form %}
 			</br>
 			<div style="margin: auto; text-align: center;" id="submit" class="centralize">
 				<input type="submit" value="Sign up" class="btn btn-primary">

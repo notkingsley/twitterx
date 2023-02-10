@@ -33,3 +33,8 @@ def add_classes(value, arg):
             css_classes.append(a)
     # join back to single string
     return value.as_widget(attrs={'class': ' '.join(css_classes)})
+
+
+@register.inclusion_tag("twitterx/render_bootstrap_form.html")
+def render_bootstrap_form(form):
+	return {"form": form}
