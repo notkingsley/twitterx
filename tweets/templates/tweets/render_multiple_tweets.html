@@ -1,0 +1,15 @@
+{% load tweet_tags %}
+
+<div class="container">
+	<hr>
+	{% for tweet in tweets %}
+	<div class="row">
+		{% render_tweet_card tweet user %}
+	</div>
+	<br>
+	{% empty %}
+	<div>
+		This user has no tweets yet.
+	</div>
+	{% endfor %}
+</div>

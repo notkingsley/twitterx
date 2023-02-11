@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% load tweet_tags %}
+
 {% block title %}
 {{ user.username }}'s profile
 {% endblock title %}
@@ -12,7 +14,7 @@
 		</h2>
 	</div>
 	<div role="main" style="height: 100%;">
-		<div id="details" style="height: 20vh;">
+		<div id="details" style="height: 250px;">
 			<div>
 				<div style="width: auto; float: left;">				
 					<div id="full-name">
@@ -57,9 +59,7 @@
 			{% endif %}
 		</div>
 		<div id="tweets">
-			<h4>
-				Tweets will go here.
-			</h4>
+			{% render_multiple_tweets user.tweets.all request.user %}
 		</div>
 	</div>
 </div>
