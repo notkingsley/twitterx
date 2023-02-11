@@ -1,0 +1,6 @@
+{% load tweet_tags %}
+
+<div class="card bg-transparent">
+	{% render_tweet_head tweet user %}
+	{% render_tweet_reactions tweet user %}
+</div>

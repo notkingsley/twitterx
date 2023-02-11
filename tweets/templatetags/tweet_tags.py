@@ -5,6 +5,9 @@ register = template.Library()
 
 @register.inclusion_tag("tweets/render_tweet.html")
 def render_tweet(tweet, user):
+	"""
+	Render the tweet appropriately, including the retweet if any
+	"""
 	return {
 		"tweet": tweet,
 		"user": user,
@@ -13,9 +16,57 @@ def render_tweet(tweet, user):
 
 @register.inclusion_tag("tweets/render_multiple_tweets.html")
 def render_multiple_tweets(tweets, user):
+	"""
+	Render an iterable of tweets, considering any possible retweets
+	"""
 	return {
 		"tweets": tweets,
-		"user": user
+		"user": user,
+	}
+
+
+@register.inclusion_tag("tweets/render_retweet.html")
+def render_retweet(tweet, user):
+	"""
+	Render a known retweet. Internal use only
+	"""
+	return {
+		"tweet": tweet,
+		"user": user,
+	}
+
+
+@register.inclusion_tag("tweets/render_single_tweet.html")
+def render_single_tweet(tweet, user):
+	"""
+	Render a tweet, ignoring a possible retweet
+	"""
+	return {
+		"tweet": tweet,
+		"user": user,
+	}
+
+
+@register.inclusion_tag("tweets/render_tweet_head.html")
+def render_tweet_head(tweet, user):
+	"""
+	Render a tweet's head and content. Internal use only
+	"""
+	return {
+		"tweet": tweet,
+		"user": user,
+	}
+
+
+@register.inclusion_tag("tweets/render_tweet_reactions.html")
+def render_tweet_reactions(tweet, user):
+	"""
+	Render the bar containing like, comment and retweet buttons
+	Internal use only
+	"""
+	return {
+		"tweet": tweet,
+		"user": user,
 	}
 
 
@@ -36,3 +87,8 @@ def time_format(time: timezone.datetime):
 		return time.strftime("%b %-d")
 	else:
 		return time.strftime("%b %-d, %Y")
+
+
+@register.simple_tag(takes_context= True, name= "tracer")
+def tracer(context):
+	print(f"Tracer here. Context: {context}")

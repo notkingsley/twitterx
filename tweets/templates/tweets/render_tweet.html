@@ -1,42 +1,7 @@
 {% load tweet_tags %}
 
-<div class="card bg-transparent">
-	<div class="card-header">
-		<div class="container" onclick="location.href='{{ tweet.author.get_absolute_url }}';" style="cursor: pointer;">
-			<div class="row">
-			<div class="col-sm" style="text-align: right;">
-				<img src="{{ tweet.author.profile_pic.url }}" alt="" width="32" height="32" class="rounded-circle me-2">
-			</div>
-			<div class="col-8">
-				{{ tweet.author.get_full_name }}
-				<div class="text-muted">
-					{{ tweet.author }}
-				</div>
-			</div>
-			<div class="col">
-				{{ tweet.created|time_format }}
-			</div>
-			</div>
-		</div>
-	</div>
-	<div onclick="location.href='{{ tweet.get_absolute_url }}';" style="cursor: pointer;">
-		<div class="card-body">
-			{{ tweet.text }}
-		</div>
-	</div>
-	<div class="card-footer">
-		<div class="container text-center">
-			<div class="row">
-			  <div class="col">
-				Comment
-			  </div>
-			  <div class="col">
-				Like
-			  </div>
-			  <div class="col">
-				Retweet
-			  </div>
-			</div>
-		</div>
-	</div>
-</div>
+{% if tweet.is_retweet %}
+{% render_retweet tweet user %}
+{% else %}
+{% render_single_tweet tweet user %}
+{% endif %}

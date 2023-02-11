@@ -54,16 +54,8 @@ class Tweet(models.Model):
 	
 
 	def is_reply(self) -> bool:
-		try:
-			self.in_reply_to
-			return True
-		except:
-			return False
+		return bool(self.in_reply_to)
 	
 
 	def is_retweet(self) -> bool:
-		try:
-			self.in_retweet_to
-			return True
-		except:
-			return False
+		return bool(self.in_retweet_to)
