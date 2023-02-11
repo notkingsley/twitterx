@@ -5,6 +5,7 @@ from django.conf import settings
 
 urlpatterns = [
     path("", include("profiles.urls")),
+    path("", include("tweets.urls")),
     path("", include("twitterx.urls")),
     path("", include("users.urls")),
     path('admin/', admin.site.urls),

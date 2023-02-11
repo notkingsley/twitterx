@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% load tweet_tags %}
+
+{% block title %}
+{{ tweet.author }} on TwitterX
+{% endblock title %}
+
+{% block content %}
+<div class="centralize">
+	<div id="tweet">
+		{% render_tweet tweet request.user %}
+	</div>
+	<div id="reply">
+		<hr>
+		Comment form goes here
+	</div>
+	<div id="replies">
+		{% render_multiple_tweets tweet.replies.objects.all request.user %}
+	</div>
+</div>
+{% endblock content %}

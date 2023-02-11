@@ -4,7 +4,7 @@ from django.utils import timezone
 register = template.Library()
 
 @register.inclusion_tag("tweets/render_tweet.html")
-def render_tweet_card(tweet, user):
+def render_tweet(tweet, user):
 	return {
 		"tweet": tweet,
 		"user": user,
