@@ -1,4 +1,5 @@
 {% load static %}
+{% load tweet_tags %}
 
 <!doctype html>
 <html lang="en">
@@ -32,14 +33,8 @@
 				<div class="container">
 					<div style="text-align: right; padding-left: 2%; padding-bottom: 1%; float: right;">
 						{% if request.user.is_authenticated %}
-
-						Hi, 
-						<a href="{% url 'profiles:profile' request.user.username %}">
-							{{ request.user.get_short_name }}, 
-						</a>
-						
+						{% render_tweet_button request.user %}
 						{% else %}
-
 						<div class="text-end">
 							<a href="{% url 'users:login' %}" class="btn btn-outline-primary me-2">
 								Log In
@@ -48,7 +43,6 @@
 								Sign Up
 							</a>
 						</div>
-
 						{% endif %}
 					</div>
 
@@ -59,21 +53,28 @@
 			<main>
 				<div class="d-flex flex-column flex-shrink-0 p-3 text-bg-dark" style="width: 20%; float: left;">
 					<div class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
-					  <svg class="bi pe-none me-2" width="40" height="32"><use xlink:href="#bootstrap"></use></svg>
 					  <span class="fs-4">TwitterX</span>
 					</div>
 					<hr>
 					<ul class="nav nav-pills flex-column mb-auto">
 					  <li class="nav-item">
-						<a href="{% url 'twitterx:home' %}" class="nav-link active" aria-current="page">
-						  <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#home"></use></svg>
+						<a href="{% url 'twitterx:home' %}" class="nav-link text-white">
 						  Home
 						</a>
 					  </li>
 					  <li>
 						<a href="#" class="nav-link text-white">
-						  <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#speedometer2"></use></svg>
 						  Hell
+						</a>
+					  </li>
+					  <li>
+						<a href="{% url 'twitterx:about' %}" class="nav-link text-white">
+							About Us
+						</a>
+					  </li>
+					  <li>
+						<a href="{% url 'twitterx:privacy' %}" class="nav-link text-white">
+							Privacy Policy
 						</a>
 					  </li>
 					</ul>
@@ -134,16 +135,6 @@
 		<div class="footer fixed-bottom">
 			<footer>
 				{% block footer %}
-				<div class="container" style="margin: auto; width: 25%;">
-					<div class="btn-group" role="group" style="margin: auto;">
-						<a href="{% url 'twitterx:about' %}" class="btn btn-primary text-nowrap">
-							About Us
-						</a>
-						<a href="{% url 'twitterx:privacy' %}" class="btn btn-primary text-nowrap">
-							Privacy Policy
-						</a>
-					</div>
-				</div>
 				{% endblock footer %}
 			</footer>
 		</div>

@@ -93,6 +93,14 @@ def render_comment_button(tweet, user):
 	}
 
 
+@register.inclusion_tag("tweets/render_tweet_button.html")
+def render_tweet_button(user):
+	"""
+	Render a button to trigger a tweet modal
+	"""
+	return {"user": user}
+
+
 @register.filter("time_format")
 def time_format(time: timezone.datetime):
 	diff = timezone.now() - time
