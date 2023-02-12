@@ -1,8 +1,8 @@
-button.comment-button svg{
+button.retweet-button svg{
     width: 15px;
     height: 15px;
 }
-.comment-button {
+.retweet-button {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -10,16 +10,16 @@ button.comment-button svg{
     padding-left: 5%;
     margin: auto;
 }
-.comment-button svg {
+.retweet-button svg {
   opacity: 1;
 }
-.comment-button svg path {
+.retweet-button svg path {
   fill: #333;
   transition: fill .4s ease-out;
 }
-.comment-button.active svg path {   
-  fill: #f32121;
-}  
-.comment-button:hover {
-  background: rgba(0, 110, 255, 0.2);
+.retweet-button.active svg path {   
+  fill: rgb(0, 186, 124);
+}
+.retweet-button:hover {
+  background: rgba(0, 186, 124, 0.2);
 }

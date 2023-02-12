@@ -55,7 +55,7 @@ class NewTweet(mixins.LoginRequiredMixin, generic.View):
 			except models.Tweet.DoesNotExist:
 				return http.HttpResponseBadRequest()
 
-		tweet = models.Tweet.objects.create(
+		models.Tweet.objects.create(
 			author= request.user,
 			modified= timezone.now(),
 			text= text,

@@ -101,6 +101,17 @@ def render_tweet_button(user):
 	return {"user": user}
 
 
+@register.inclusion_tag("tweets/render_retweet_button.html")
+def render_retweet_button(tweet, user):
+	"""
+	Render the retweet equivalent of a comment button
+	"""
+	return {
+		"tweet": tweet,
+		"user": user,
+	}
+
+
 @register.filter("time_format")
 def time_format(time: timezone.datetime):
 	diff = timezone.now() - time
