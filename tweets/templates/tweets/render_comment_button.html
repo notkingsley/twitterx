@@ -1,0 +1,46 @@
+{% load tweet_tags %}
+
+<div>
+	<button	class="comment-button btn circular" type="button" data-bs-toggle="modal" data-bs-target="#commentModal{{ tweet.pk }}">
+		<svg viewBox="0 0 24 24">
+			<path d="M1.751 10c0-4.42 3.584-8 8.005-8h4.366c4.49 0 8.129 3.64 8.129 8.13 0 2.96-1.607 5.68-4.196 7.11l-8.054 4.46v-3.69h-.067c-4.49.1-8.183-3.51-8.183-8.01zm8.005-6c-3.317 0-6.005 2.69-6.005 6 0 3.37 2.77 6.08 6.138 6.01l.351-.01h1.761v2.3l5.087-2.81c1.951-1.08 3.163-3.13 3.163-5.36 0-3.39-2.744-6.13-6.129-6.13H9.756z">
+			</path>
+		</svg>
+		{% with c=tweet.replies.count %}{% if c %}{{ c }}{% endif %}{% endwith %}
+	</button>
+
+	<div class="modal fade" id="commentModal{{ tweet.pk }}" tabindex="-1" aria-labelledby="commentModalLabel" aria-hidden="true">
+		<form method="post" action="{% url 'tweets:new_tweet' %}">
+			{% csrf_token %}
+			<input name="reply_id" value="{{ tweet.pk }}" type="hidden">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+							<svg viewBox="0 0 24 24">
+								<path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z">
+								</path>
+							</svg>
+						</button>
+					</div>
+					<div class="modal-body" style="text-align: left;">
+						<div class="card bg-transparent">
+							{% render_tweet_head tweet user %}
+						</div>
+						<div>
+							<input class="form-control" type="text" name="text" placeholder="Tweet your reply" style="width: 100%;" required>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+							Cancel
+						</button>
+						<button type="submit" class="btn btn-primary" data-bs-dismiss="modal">
+							Send tweet
+						</button>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>

@@ -82,6 +82,17 @@ def render_like_button(tweet, user):
 	}
 
 
+@register.inclusion_tag("tweets/render_comment_button.html")
+def render_comment_button(tweet, user):
+	"""
+	Render a comment button and the modal containing the form
+	"""
+	return {
+		"tweet": tweet,
+		"user": user,
+	}
+
+
 @register.filter("time_format")
 def time_format(time: timezone.datetime):
 	diff = timezone.now() - time

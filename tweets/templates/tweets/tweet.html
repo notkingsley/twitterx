@@ -13,10 +13,24 @@
 	</div>
 	<div id="reply">
 		<hr>
-		Comment form goes here
+		<form method="post" action="{% url 'tweets:new_tweet' %}">
+			{% csrf_token %}
+			<input name="reply_id" value="{{ tweet.pk }}" type="hidden">
+			<div style="width: 80%; float: left;">
+				<input class="form-control" type="text" name="text" placeholder="Tweet your reply" style="width: 100%;" required>
+			</div>
+			<div style="width: 20%; float: right;">
+				<button type="submit" class="btn btn-primary" data-bs-dismiss="modal">
+					<small>
+						Send tweet
+					</small>
+				</button>
+			</div>
+			<div style="clear: both;"></div>
+		</form>
 	</div>
 	<div id="replies">
-		{% render_multiple_tweets tweet.replies.objects.all request.user %}
+		{% render_multiple_tweets tweet.replies.all request.user %}
 	</div>
 </div>
 {% endblock content %}

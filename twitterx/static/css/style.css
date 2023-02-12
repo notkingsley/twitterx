@@ -39,3 +39,7 @@ img.profile {
     width: 150px;
     height: 150px;
 }
+
+.no-click {
+    pointer-events: none;
+}

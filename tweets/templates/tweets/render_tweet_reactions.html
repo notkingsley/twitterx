@@ -1,10 +1,10 @@
 {% load tweet_tags %}
 
 <div class="card-footer">
-	<div class="container text-center">
+	<div class="container text-center {% if not user.is_authenticated %}no-click{% endif %}">
 		<div class="row">
 		  <div class="col">
-			Comment
+			{% render_comment_button tweet user %}
 		  </div>
 		  <div class="col">
 			{% render_like_button tweet user %}

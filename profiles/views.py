@@ -16,6 +16,8 @@ LOGIN_URL = reverse_lazy("users:login")
 
 DEFAULT_PICTURE = "profile_pics/default.jpeg"
 
+REDIRECT_FIELD_NAME = 'r'
+
 
 class Profile(generic.DetailView):
 	template_name: str = "profiles/profile.html"
@@ -28,6 +30,7 @@ class EditProfile(mixins.LoginRequiredMixin, generic.UpdateView):
 	template_name: str = "profiles/edit.html"
 	fields = ["username", "email", "first_name", "last_name"]
 	login_url = LOGIN_URL
+	redirect_field_name = REDIRECT_FIELD_NAME
 
 	def get_object(self, queryset= None):
 		return self.request.user
@@ -39,6 +42,7 @@ class DeleteProfile(mixins.LoginRequiredMixin, generic.DeleteView):
 	login_url = LOGIN_URL
 	success_url = HOMEPAGE
 	form_class = forms.ProfileDeleteForm
+	redirect_field_name = REDIRECT_FIELD_NAME
 
 	def get_object(self, queryset= None):
 		return self.request.user
@@ -57,6 +61,7 @@ class DeleteProfile(mixins.LoginRequiredMixin, generic.DeleteView):
 
 class Follow(mixins.LoginRequiredMixin, generic.View):
 	login_url = LOGIN_URL
+	redirect_field_name = REDIRECT_FIELD_NAME
 
 	def post(self, request, *args, **kwargs):
 		try:
@@ -78,6 +83,7 @@ class EditPicture(mixins.LoginRequiredMixin, generic.UpdateView):
 	template_name: str = "profiles/picture.html"
 	fields = ["profile_pic"]
 	login_url = LOGIN_URL
+	redirect_field_name = REDIRECT_FIELD_NAME
 
 	def get_object(self, queryset= None):
 		return self.request.user
@@ -98,6 +104,7 @@ class EditPicture(mixins.LoginRequiredMixin, generic.UpdateView):
 
 class DeletePicture(mixins.LoginRequiredMixin, generic.View):
 	login_url = LOGIN_URL
+	redirect_field_name = REDIRECT_FIELD_NAME
 
 	def delete(self, request, *args, **kwargs):
 		if request.user.profile_pic.name != DEFAULT_PICTURE:

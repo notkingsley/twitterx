@@ -1,28 +1,28 @@
-button.like-button svg{
+button.comment-button svg{
     width: 15px;
     height: 15px;
 }
-.like-button {
+.comment-button {
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 0%;
     margin: auto;
 }
-.like-button.animated {
+.comment-button.animated {
   -webkit-animation: pop 0.9s both;
   animation: pop 0.9s both;
 }
-.like-button svg {
+.comment-button svg {
   opacity: 1;
 }
-.like-button svg path {
+.comment-button svg path {
   fill: #333;
   transition: fill .4s ease-out;
 }
-.like-button.active svg path {   
+.comment-button.active svg path {   
   fill: #f32121;
-}
-.like-button:hover {
-  background: rgba(255, 25, 25, 0.2);
+}  
+.comment-button:hover {
+  background: rgba(0, 110, 255, 0.2);
 }
