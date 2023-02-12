@@ -1,3 +1,5 @@
+{% load tweet_tags %}
+
 <div class="card-footer">
 	<div class="container text-center">
 		<div class="row">
@@ -5,7 +7,7 @@
 			Comment
 		  </div>
 		  <div class="col">
-			Like
+			{% render_like_button tweet user %}
 		  </div>
 		  <div class="col">
 			Retweet

@@ -1,5 +1,6 @@
 from django import template
 from django.utils import timezone
+from django.urls import reverse
 
 register = template.Library()
 
@@ -63,6 +64,17 @@ def render_tweet_reactions(tweet, user):
 	"""
 	Render the bar containing like, comment and retweet buttons
 	Internal use only
+	"""
+	return {
+		"tweet": tweet,
+		"user": user,
+	}
+
+
+@register.inclusion_tag("tweets/render_like_button.html")
+def render_like_button(tweet, user):
+	"""
+	Render a like button to send a post request to tweet's like url
 	"""
 	return {
 		"tweet": tweet,
