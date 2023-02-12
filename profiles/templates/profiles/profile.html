@@ -14,7 +14,7 @@
 		</h2>
 	</div>
 	<div role="main" style="height: 100%;">
-		<div id="details" style="height: 250px;">
+		<div id="details" style="height: auto">
 			<div>
 				<div style="width: auto; float: left;">				
 					<div id="full-name">
@@ -37,7 +37,7 @@
 				<div style="float: right;">
 					
 					<a href="{% if request.user.is_authenticated and request.user == user %}{% url 'profiles:picture' %}{% endif %}">
-						<img class="border border-primary rounded-circle img-fluid profile" src="{{ user.profile_pic.url }}">
+						<img class="border border-primary rounded-circle img-fluid profile" src="{{ user.profile_pic.url }}" width="120" height="120">
 					</a>
 				</div>
 				<div style="clear: both;"></div>

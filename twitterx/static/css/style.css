@@ -24,20 +24,9 @@ a:hover {
     color: silver;
 }
 
-footer {
-    bottom:0;
-    width:100%;
-    height:60px;
-}
-
 .centralize {
     width: 50%;
     margin: auto;
-}
-
-img.profile {
-    width: 150px;
-    height: 150px;
 }
 
 .no-click {
