@@ -18,8 +18,8 @@ button.comment-button svg{
   transition: fill .4s ease-out;
 }
 .comment-button.active svg path {   
-  fill: #f32121;
-}  
+  fill: rgb(0, 110, 255);
+}
 .comment-button:hover {
   background: rgba(0, 110, 255, 0.2);
 }

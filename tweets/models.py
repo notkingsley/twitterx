@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 from django.urls import reverse
+from django.contrib.auth import get_user_model
 
 class Tweet(models.Model):
 	created = models.DateTimeField("Date created", auto_now_add= timezone.now)
@@ -59,3 +60,17 @@ class Tweet(models.Model):
 
 	def is_retweet(self) -> bool:
 		return bool(self.in_retweet_to)
+	
+
+	def get_reply_set(self):
+		"""
+		Return the queryset of users that's replied to this tweet
+		"""
+		return get_user_model().objects.filter(tweets__in= self.replies.all())
+	
+
+	def get_retweet_set(self):
+		"""
+		Return the queryset of users that's retweeted this tweet
+		"""
+		return get_user_model().objects.filter(tweets__in= self.retweets.all())

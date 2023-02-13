@@ -3,7 +3,7 @@
 <div class="card bg-transparent">
 	{% render_tweet_head tweet user %}
 	<div style="padding-left: 10%;">
-		{% render_single_tweet tweet.in_retweet_to user %}
+		{% render_tweet_head tweet.in_retweet_to user %}
 	</div>
 	{% render_tweet_reactions tweet user %}
 </div>
