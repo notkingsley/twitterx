@@ -66,3 +66,7 @@ class User(AbstractUser):
 	
 	def get_absolute_url(self) -> str:
 		return reverse_lazy("profiles:profile", kwargs= {"username": self.username})
+	
+
+	def get_timeline_tweets(self):
+		return self.tweets.filter(in_reply_to__isnull= True)

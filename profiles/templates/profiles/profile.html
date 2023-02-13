@@ -59,7 +59,7 @@
 			{% endif %}
 		</div>
 		<div id="tweets">
-			{% render_multiple_tweets user.tweets.all request.user %}
+			{% render_multiple_tweets user.get_timeline_tweets request.user %}
 		</div>
 	</div>
 </div>
