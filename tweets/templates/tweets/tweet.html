@@ -9,7 +9,7 @@
 {% block content %}
 <div class="centralize">
 	<div id="tweet">
-		{% render_tweet tweet request.user %}
+		{% render_tweet tweet request.user with_menu=True %}
 	</div>
 	<div id="reply">
 		<hr>
@@ -30,7 +30,7 @@
 		</form>
 	</div>
 	<div id="replies">
-		{% render_multiple_tweets tweet.replies.all request.user %}
+		{% render_multiple_tweets tweet.replies.all request.user with_menu=True %}
 	</div>
 </div>
 {% endblock content %}

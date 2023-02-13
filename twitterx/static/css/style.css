@@ -24,11 +24,20 @@ a:hover {
     color: silver;
 }
 
-.centralize {
+.centralize, .centralize-75{
+    width: 75%;
+    margin: auto;
+}
+
+.centralize-50{
     width: 50%;
     margin: auto;
 }
 
 .no-click {
     pointer-events: none;
+}
+
+.no-padding {
+    padding: 0%;
 }

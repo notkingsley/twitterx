@@ -47,7 +47,7 @@
 			<form method="post" action="{% url 'profiles:follow' user.username %}">
 				{% csrf_token %}
 				<div class="d-grid gap-2">
-					<button onclick="follow()" id="follow-button" class="btn btn-primary" type="submit">
+					<button onclick="follow(this.getAttribute('data-bs-user'))" id="follow-button" class="btn btn-primary follow-button" type="submit" data-bs-user="{{ user }}" >
 						{% if user in request.user.follows.all %}
 						Unfollow
 						{% else %}
@@ -59,7 +59,7 @@
 			{% endif %}
 		</div>
 		<div id="tweets">
-			{% render_multiple_tweets user.get_timeline_tweets request.user %}
+			{% render_multiple_tweets user.get_timeline_tweets request.user with_menu=True %}
 		</div>
 	</div>
 </div>

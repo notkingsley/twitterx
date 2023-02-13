@@ -1,7 +1,7 @@
 {% load tweet_tags %}
 
 {% if tweet.is_retweet %}
-{% render_retweet tweet user %}
+{% render_retweet tweet user with_menu %}
 {% else %}
-{% render_single_tweet tweet user %}
+{% render_single_tweet tweet user with_menu %}
 {% endif %}

@@ -5,57 +5,62 @@ from django.urls import reverse
 register = template.Library()
 
 @register.inclusion_tag("tweets/render_tweet.html")
-def render_tweet(tweet, user):
+def render_tweet(tweet, user, with_menu= False):
 	"""
 	Render the tweet appropriately, including the retweet if any
 	"""
 	return {
 		"tweet": tweet,
 		"user": user,
+		"with_menu": with_menu,
 	}
 
 
 @register.inclusion_tag("tweets/render_multiple_tweets.html")
-def render_multiple_tweets(tweets, user):
+def render_multiple_tweets(tweets, user, with_menu= False):
 	"""
 	Render an iterable of tweets, considering any possible retweets
 	"""
 	return {
 		"tweets": tweets,
 		"user": user,
+		"with_menu": with_menu,
 	}
 
 
 @register.inclusion_tag("tweets/render_retweet.html")
-def render_retweet(tweet, user):
+def render_retweet(tweet, user, with_menu= False):
 	"""
 	Render a known retweet. Internal use only
 	"""
 	return {
 		"tweet": tweet,
 		"user": user,
+		"with_menu": with_menu,
 	}
 
 
 @register.inclusion_tag("tweets/render_single_tweet.html")
-def render_single_tweet(tweet, user):
+def render_single_tweet(tweet, user, with_menu= False):
 	"""
 	Render a tweet, ignoring a possible retweet
 	"""
 	return {
 		"tweet": tweet,
 		"user": user,
+		"with_menu": with_menu,
 	}
 
 
 @register.inclusion_tag("tweets/render_tweet_head.html")
-def render_tweet_head(tweet, user):
+def render_tweet_head(tweet, user, with_menu= False):
 	"""
 	Render a tweet's head and content. Internal use only
 	"""
 	return {
 		"tweet": tweet,
 		"user": user,
+		"with_menu": with_menu,
 	}
 
 
@@ -112,6 +117,17 @@ def render_retweet_button(tweet, user):
 	}
 
 
+@register.inclusion_tag("tweets/render_menu_button.html")
+def render_menu_button(tweet, user):
+	"""
+	Render a menu button related to the tweet and user
+	"""
+	return {
+		"tweet": tweet,
+		"user": user,
+	}
+
+
 @register.filter("time_format")
 def time_format(time: timezone.datetime):
 	diff = timezone.now() - time
@@ -132,5 +148,6 @@ def time_format(time: timezone.datetime):
 
 
 @register.simple_tag(takes_context= True, name= "tracer")
-def tracer(context):
-	print(f"Tracer here. Context: {context}")
+def tracer(context, *args, **kwargs):
+	print(f"Tracer here. Context: {context}.\nArgs: {args}.\nKwargs: {kwargs}")
+	return ''
