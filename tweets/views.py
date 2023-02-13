@@ -23,11 +23,16 @@ class Like(mixins.LoginRequiredMixin, generic.View):
 	redirect_field_name = REDIRECT_FIELD_NAME
 
 	def post(self, request, *args, **kwargs):
-		tweet = models.Tweet.objects.get(pk= kwargs["pk"])
+		try:
+			tweet = models.Tweet.objects.get(pk= kwargs["pk"])
+		except models.Tweet.DoesNotExist:
+			return http.HttpResponseBadRequest()
+
 		if request.user in tweet.likes.all():
 			tweet.likes.remove(request.user)
 		else:
 			tweet.likes.add(request.user)
+
 		tweet.save()
 		return http.HttpResponse(status= 204)
 
@@ -62,3 +67,27 @@ class NewTweet(mixins.LoginRequiredMixin, generic.View):
 			**d
 		)
 		return http.HttpResponse(status= 204)
+
+
+class DeleteTweet(mixins.LoginRequiredMixin, generic.View):
+	login_url = LOGIN_URL
+	redirect_field_name = REDIRECT_FIELD_NAME
+
+	def delete(self, request, *args, **kwargs):
+		try:
+			tweet = models.Tweet.objects.get(pk= kwargs["pk"])
+		except models.Tweet.DoesNotExist:
+			return http.HttpResponseBadRequest()
+
+		if tweet.author != request.user:
+			return http.HttpResponseForbidden()
+		
+		tweet.delete()
+		return http.HttpResponseRedirect(
+			request.POST.get(
+				self.get_redirect_field_name(), 
+				request.user.get_absolute_url()
+			)
+		)
+
+	post = delete

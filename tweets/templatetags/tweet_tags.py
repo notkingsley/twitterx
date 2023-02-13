@@ -140,7 +140,7 @@ def time_format(time: timezone.datetime):
 	elif diff < timezone.timedelta(days= 2):
 		return "Yesterday"
 	elif diff < timezone.timedelta(weeks= 1):
-		return f"{diff.days // 7}d"
+		return f"{diff.days}d"
 	elif time.year == timezone.now().year:
 		return time.strftime("%b %-d")
 	else:
