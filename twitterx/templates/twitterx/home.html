@@ -1,14 +1,25 @@
 {% extends "base.html" %}
 
 {% block content %}
-	<div style="text-align: center;">
-		<h1>
-			<a href="{% url 'twitterx:home' %}">
-				TwitterX Home
-			</a>
+	<div class="centralize-75">
+		<h1 style="text-align: center;">
+			<div style="padding: 5%; padding-bottom: 20%;">
+				<a href="{% url 'twitterx:home' %}" style="color: silver;">
+					TwitterX
+				</a>
+			</div>
+			<div style="width: 100%; height: auto;" class="row">
+				<div class="col text-center">
+					<a href="{% url 'users:login' %}" class="btn btn-lg btn-outline-primary me-2">
+						Log In
+					</a>
+				</div>
+				<div class="col text-center">
+					<a href="{% url 'users:signup' %}" class="btn btn-lg btn-primary">
+						Sign Up
+					</a>
+				</div>
+			</div>
 		</h1>
 	</div>
-	<p>
-		Go to latest tweets
-	</p>
 {% endblock content %}

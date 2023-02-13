@@ -17,7 +17,7 @@
 			{% csrf_token %}
 			<input name="reply_id" value="{{ tweet.pk }}" type="hidden">
 			<div style="width: 80%; float: left;">
-				<input class="form-control" type="text" name="text" placeholder="Tweet your reply" style="width: 100%;" required>
+				<textarea class="form-control" name="text" placeholder="Tweet your reply" style="width: 100%;" required></textarea>
 			</div>
 			<div style="width: 20%; float: right;">
 				<button type="submit" class="btn btn-primary" data-bs-dismiss="modal">
