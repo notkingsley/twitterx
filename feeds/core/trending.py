@@ -1,9 +1,9 @@
 from collections import deque
 import datetime
-from threading import Thread, Lock
-from time import sleep
 
-import redis
+import asyncio
+
+import redis.asyncio as redis
 
 
 _client = redis.Redis(
@@ -28,58 +28,86 @@ class KFilter():
 	KFilter objects are meant are meant to be recyclable.
 	"""
 
-	def __init__(
-		self, 
-		client: redis.Redis|None = None,
-		k: int = 20,
-		prefix: str = "topk",
-		width= 8,
-		depth= 7,
-		decay= 0.9
-	) -> None:
+	def __init__(self, client: redis.Redis|None = None, prefix: str = "topk") -> None:
+		"""
+		Initialize internal variables. This does not create the top-k
+		Use make() instead
+		"""
 		self._client = client or get_global_client()
 		self._key = f"{prefix}:{id(self)}"
-		self._client.topk().reserve(
-			self._key,
-			k= k,
-			width= width,
-			depth= depth,
-			decay= decay,
-		)
+		self._valid = asyncio.Event()
+		self.ensure_valid = self._valid.wait
 	
 
 	def __del__(self) -> None:
 		"""
 		Delete entry in redis
 		"""
-		self._client.delete(self._key)
+		self._valid.clear()
+		print("deleting", self._key)
+		asyncio.create_task(self._client.delete(self._key))
 	
 
-	def add(self, obj, pipe= None) -> None:
+	def _validate(self, fut= None):
+		"""
+		Signal that the KFilter is stored in redis
+		"""
+		self._valid.set()
+	
+
+	@classmethod
+	async def make(
+		cls,
+		client: redis.Redis|None = None,
+		prefix: str = "topk",
+		k: int = 20,
+		width= 8,
+		depth= 7,
+		decay= 0.9,
+	):
+		kf = KFilter(client, prefix)
+		task = asyncio.create_task(
+			kf._client.topk().reserve(
+				kf._key,
+				k= k,
+				width= width,
+				depth= depth,
+				decay= decay,
+			)
+		)
+		task.add_done_callback(kf._validate)
+		
+		return kf
+	
+
+	async def add(self, obj, pipe= None) -> None:
 		"""
 		Add object to the topk
 		"""
+		await self.ensure_valid()
 		client = pipe or self._client
-		client.topk().add(self._key, obj)
+		await client.topk().add(self._key, obj)
 	
 
-	def get(self) -> dict:
+	async def get(self) -> dict:
 		"""
 		Return a dictionary of elements and their 
 		respective counts
 		"""
+		await self.ensure_valid()
 		ret = dict()
-		l = self._client.topk().list(self._key, True)
+		l = await self._client.topk().list(self._key, True)
 		for i in range(0, len(l), 2):
 			ret[l[i]] = l[i + 1]
 		return ret
 	
 
-	def check(self, obj) -> bool:
+	async def check(self, obj) -> bool:
 		"""
 		Check if obj is in top k elements
 		"""
-		return bool(self._client.topk().query(self._key, obj)[0])
+		await self.ensure_valid()
+		return bool(await self._client.topk().query(self._key, obj)[0])
 
 
 class KQueue():
@@ -95,64 +123,76 @@ class KQueue():
 		"""
 		Initialize a KQueue with a size of size
 		kwargs should be a formula for making KFilters
+		The KQueue is not guaranteed to be ready after this,
+		use make() instead
 		"""
 		self._deque: deque[KFilter] = deque(maxlen= maxlen)
 		self._params = kwargs
-		self._lock = Lock() # lock so signal() doesn't change deque while reading
-		self.signal()
+		self._lock = asyncio.Lock()
+	
+
+	@classmethod
+	async def make(cls, **kwargs):
+		kq = KQueue(**kwargs)
+		await kq.signal()
+		return kq
 
 
-	def signal(self) -> None:
+	async def signal(self) -> None:
 		"""
 		Create a new KFilter object, discarding any excesses
 		"""
-		with self._lock:
-			self._deque.append(KFilter(**self._params))
+		async with self._lock:
+			self._deque.append(await KFilter.make(**self._params))
 	
 
-	def add(self, obj, pipe= None) -> None:
+	async def add(self, obj, pipe= None) -> None:
 		"""
 		Add obj to all elements in queue
 		"""
-		with self._lock:
+		async with self._lock:
 			for k in self._deque:
-				k.add(obj, pipe)
+				await k.add(obj, pipe)
 	
 
-	def get(self) -> dict:
+	async def get(self) -> dict:
 		"""
 		Get all k elements from oldest KFilter
 		"""
-		with self._lock:
-			return self._deque[0].get()
+		async with self._lock:
+			return await self._deque[0].get()
 	
 
-	def check(self, obj) -> bool:
+	async def check(self, obj) -> bool:
 		"""
 		Check if obj is present in oldest KFilter
 		"""
-		with self._lock:
-			return self._deque[0].check(obj)
+		async with self._lock:
+			return await self._deque[0].check(obj)
 
 
-class Clock(Thread):
+class Clock():
 	"""
 	Hold a reference to a KQueue and signal it periodically
 	"""
 
 	def __init__(self, queue: KQueue, interval: float) -> None:
-		super().__init__()
 		self._queue = queue
 		self._interval = interval
 		self._running = True
 	
 
-	def run(self) -> None:
+	async def run(self) -> None:
 		while self._running:
 			print("signalling")
-			self._queue.signal()
-			sleep(self._interval)
+			await self._queue.signal()
+			await asyncio.sleep(self._interval)
 	
+
+	def start(self) -> None:
+		self._running = True
+		asyncio.create_task(self.run())
+
 
 	def stop(self) -> None:
 		self._running = False
@@ -168,47 +208,64 @@ class EventFrame():
 	arguments and provides a similar interface
 	"""
 
-	def __init__(self, size, interval, **kwargs) -> None:
+	def __init__(self, kqueue: KQueue, size, interval) -> None:
+		"""
+		Use make() to create EventFrames
+		"""
+		self._queue = kqueue
+		self._clock = Clock(self._queue, interval / size)
+		self.add = self._queue.add
+		self.get = self._queue.get
+		self.check = self._queue.check
+		self.stop = self._clock.stop
+		self._clock.start()
+	
+
+	def __del__(self) -> None:
+		self._clock.stop()
+	
+
+	@classmethod
+	async def make(cls, size, interval, **kwargs):
 		"""
 		Make a new EventFrame. kwargs are forwarded to the
 		underlying kqueue
 		size is the duplicity (more means less variance from 
 		exact data interval seconds ago, but also means more memory)
 		"""
-		self._queue = KQueue(maxlen=size, **kwargs)
-		self._clock = Clock(self._queue, interval / size)
-		self.add = self._queue.add
-		self.get = self._queue.get
-		self.check = self._queue.check
-		self._clock.start()
-	
-
-	def __del__(self) -> None:
-		self._clock.stop()
+		kq = await KQueue.make(maxlen=size, **kwargs)
+		return EventFrame(kq, size, interval)
 
 
-def main():
-	q = EventFrame(8, 1)
+async def main():
+	q = await EventFrame.make(8, 3)
 
-	def batch(q, num= 10, pipe= None):
+	async def batch(q, num= 10, pipe= None):
 		for j in range(num):
 			for i in range(j):
-				q.add("val" + str(i), pipe)
+				await q.add("val" + str(i), pipe)
 		if pipe:
-			pipe.execute(False)
+			await pipe.execute(False)
 	
 	for _ in range(10):
 		now = datetime.datetime.now()
-		batch(q, 30, get_global_client().pipeline())
+		await batch(q, 30, get_global_client().pipeline())
 		print(datetime.datetime.now() - now)
 
 		now = datetime.datetime.now()
-		print(q.get())
+		print(await q.get())
 		print(datetime.datetime.now() - now)
+	
+	q.stop()
+	print("sleeping to close")
+	await asyncio.sleep(3)
+	await get_global_client().close()
 	
 
 if __name__ == "__main__":
-	main()
+	asyncio.run(main())
+
+
 
 
 class Manager():
