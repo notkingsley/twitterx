@@ -1,7 +1,9 @@
-from collections import deque
+from abc import ABC, abstractmethod
+from collections import defaultdict, deque
 import datetime
 
 import asyncio
+from typing import Type
 
 import redis.asyncio as redis
 
@@ -44,7 +46,6 @@ class KFilter():
 		Delete entry in redis
 		"""
 		self._valid.clear()
-		print("deleting", self._key)
 		asyncio.create_task(self._client.delete(self._key))
 	
 
@@ -171,27 +172,59 @@ class KQueue():
 			return await self._deque[0].check(obj)
 
 
-class Clock():
+class TaskManager():
 	"""
-	Hold a reference to a KQueue and signal it periodically
+	A convenient base class for classes that create and manage
+	their own tasks
 	"""
 
-	def __init__(self, queue: KQueue, interval: float) -> None:
-		self._queue = queue
-		self._interval = interval
-		self._running = True
+	_tasks: set[asyncio.Task] = set()
+
+	@classmethod
+	def make_task(cls, coro):
+		"""
+		Create and keep track of a task 
+		"""
+		task = asyncio.create_task(coro)
+		cls._tasks.add(task)
+		task.add_done_callback(cls._tasks.discard)
+		return task
 	
 
-	async def run(self) -> None:
+	@classmethod
+	def kill_all(cls):
+		for task in cls._tasks:
+			task.cancel()
+		cls._tasks.clear()
+
+
+class Clock(TaskManager):
+	"""
+	Holds a reference to a callback signal it periodically
+	"""
+
+	def __init__(self, callback, interval: float, **kwargs) -> None:
+		"""
+		Initialize a clock with a callback that gets called
+		every interval seconds with kwargs
+		"""
+		self._callback = callback
+		self._interval = interval
+		self._kwargs = kwargs
+		self._running = False	
+	
+
+	async def _run(self) -> None:
 		while self._running:
-			print("signalling")
-			await self._queue.signal()
+			await self._callback(**self._kwargs)
 			await asyncio.sleep(self._interval)
 	
 
 	def start(self) -> None:
+		if self._running:
+			return
 		self._running = True
-		asyncio.create_task(self.run())
+		self.make_task(self._run())
 
 
 	def stop(self) -> None:
@@ -213,7 +246,8 @@ class EventFrame():
 		Use make() to create EventFrames
 		"""
 		self._queue = kqueue
-		self._clock = Clock(self._queue, interval / size)
+		self.interval = interval
+		self._clock = Clock(self._queue.signal, self.interval / size)
 		self.add = self._queue.add
 		self.get = self._queue.get
 		self.check = self._queue.check
@@ -237,7 +271,133 @@ class EventFrame():
 		return EventFrame(kq, size, interval)
 
 
+class Enzyme(ABC):
+	"""
+	An enzyme is the signature behaviour of a trend object
+	Only implementations of this class know the nature of the
+	objects received from the stream and extract the required 
+	parameter
+	"""
+
+	@abstractmethod
+	def digest(self, obj):
+		pass
+
+
+class Trend():
+	"""
+	Manage multiple eventframes with varying clock lengths
+	Provide an interface to collect all top k trending
+	elements on demand
+	
+	This class collects the results from the eventframes
+	amd combines them in some time-weighted fashion to produce a list
+	of the top k trending objects
+	
+	A trend object represents how frequent recent occurences of
+	the most frequent objects has occured in recent streams.
+	"""
+
+	def __init__(self, enzyme_class: Type[Enzyme]) -> None:
+		"""
+		Use make() to create Trend objects
+		"""
+		self._enzyme = enzyme_class()
+		self._frames: list[EventFrame]
+	
+
+	def __del__(self):
+		self.terminate()
+	
+
+	def terminate(self):
+		for f in self._frames:
+			f.stop()
+	
+
+	@classmethod
+	async def make(
+		cls,
+		enzyme_class: Type[Enzyme],
+		intervals: list[datetime.timedelta],
+		duplicity= 10,
+		**kwargs
+	):
+		t = Trend(enzyme_class)
+		t._frames = [
+			await EventFrame.make(
+				duplicity,
+				i.seconds,
+				**kwargs
+			) for i in intervals
+		]
+		return t
+
+
+	async def notify(self, obj, pipe):
+		"""
+		Notify this trend of a new obj in the stream
+		"""
+		digest = self._enzyme.digest(obj)
+		for f in self._frames:
+			await f.add(digest, pipe)
+	
+
+	async def fetch(self, k= 20):
+		"""
+		Get the top k trending objects
+		"""
+		agg = await asyncio.gather(*[f.get() for f in self._frames])
+		d = defaultdict(float)
+		for interval, res in zip((f.interval for f in self._frames), agg):
+			for key, val in res.items():
+				d[key] += val / interval ** 2
+		
+		return [tp for tp in sorted(
+			d.items(),
+			key= lambda item: item[1],
+			reverse= True,
+		)][:k]
+	
+
+class DummyEnzyme(Enzyme):
+	def digest(self, obj):
+		return obj
+
+
+dummy_intervals = [
+	datetime.timedelta(seconds= 3),
+	datetime.timedelta(seconds= 5),
+	datetime.timedelta(seconds= 10),
+]
+
+
 async def main():
+	t = await Trend.make(DummyEnzyme, dummy_intervals)
+
+	async def p(obj):
+		print(obj)
+
+	clocks: list[Clock] = list()
+	for i in range(1, 10):
+		clocks.append(Clock(t.notify, 10/i, obj= f"val{i}"))
+		clocks[-1].start()
+	print("all started")
+
+	await asyncio.sleep(11)
+	print("start fetching")
+	for _ in range(10):
+		print("fetched: ", await t.fetch())
+		await asyncio.sleep(1)
+	print("all fetched ")
+
+	[clock.stop() for clock in clocks]
+	t.terminate()
+	await asyncio.gather(*Clock._tasks)
+	await get_global_client().close()
+
+
+async def main1():
 	q = await EventFrame.make(8, 3)
 
 	async def batch(q, num= 10, pipe= None):
@@ -257,39 +417,10 @@ async def main():
 		print(datetime.datetime.now() - now)
 	
 	q.stop()
-	print("sleeping to close")
-	await asyncio.sleep(3)
-	await get_global_client().close()
 	
 
 if __name__ == "__main__":
 	asyncio.run(main())
-
-
-
-
-class Manager():
-	"""
-	Manage multiple eventframes with varying clock lengths
-	Provide an interface to collect all top k trending
-	elements on demand
-	
-	This class collects the results from the eventframes
-	amd combines them in some time-weighted fashion to produce a list
-	of the top k trending objects
-	
-	Only one type of trending parameter should be used per object, for
-	example, the tweet id
-	"""
-
-
-class Enzyme():
-	"""
-	An enzyme is the signature behaviour of a manager object
-	It accepts tweet objects and the particular implementation
-	decides which parameter to extract for the underlying topk filters,
-	a tweet id for example
-	"""
 
 
 class Listener():
