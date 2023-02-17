@@ -3,7 +3,7 @@
 {% load tweet_tags %}
 
 {% block title %}
-{{ user.username }}'s profile
+{{ user.get_full_name }} ({{ user }}) | TwitterX
 {% endblock title %}
 
 {% block content %}
@@ -58,8 +58,34 @@
 			</form>
 			{% endif %}
 		</div>
+		<div>
+			<ul class="nav nav-tabs nav-justified">
+				<li class="nav-item">
+				  <a class="nav-link {{ is_profile }}" href="{% url 'profiles:profile' user.username %}">
+					Tweets
+				  </a>
+				</li>
+				<li class="nav-item">
+				  <a class="nav-link {{ is_with_replies }}" href="{% url 'profiles:with_replies' user.username %}">
+					Tweets with replies
+				  </a>
+				</li>
+				<li class="nav-item">
+				  <a class="nav-link {{ is_likes }}" href="{% url 'profiles:likes' user.username %}">
+					Likes
+				  </a>
+				</li>
+				<li class="nav-item">
+				  <a class="nav-link disabled">
+					Media
+				  </a>
+				</li>
+			  </ul>
+		</div>
 		<div id="tweets">
+			{% block tweets %}
 			{% render_multiple_tweets user.get_timeline_tweets request.user with_menu=True %}
+			{% endblock tweets %}
 		</div>
 	</div>
 </div>

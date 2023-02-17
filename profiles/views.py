@@ -24,6 +24,22 @@ class Profile(generic.DetailView):
 	model = User
 	slug_field: str = "username"
 	slug_url_kwarg: str = "username"
+	active_keyword = "is_profile"
+
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
+		context[self.active_keyword] = "active"
+		return context
+
+
+class ProfileWithReplies(Profile):
+	template_name: str = "profiles/profile_with_replies.html"
+	active_keyword = "is_with_replies"
+
+
+class ProfileLikes(Profile):
+	template_name: str = "profiles/profile_likes.html"
+	active_keyword = "is_likes"
 
 
 class EditProfile(mixins.LoginRequiredMixin, generic.UpdateView):

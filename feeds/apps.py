@@ -10,10 +10,11 @@ class FeedsConfig(AppConfig):
 	def ready(self) -> None:
 		from . import signals
 
-		signals.start()
+		# signals.start()
 
 		@receiver(post_save, sender= "tweets.Tweet", dispatch_uid= "new_tweet", weak= False)
 		def new_tweet(sender, **kwargs):
+			return
 			if not kwargs["created"]:
 				print("tweet event denied")
 				return

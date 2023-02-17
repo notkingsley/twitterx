@@ -1,0 +1,11 @@
+{% extends "profiles/profile.html" %}
+
+{% load tweet_tags %}
+
+{% block title %}
+Tweets with replies by {{ user.get_full_name }}
+{% endblock title %}
+
+{% block tweets %}
+{% render_multiple_tweets user.tweets.all request.user with_menu=True %}
+{% endblock tweets %}
