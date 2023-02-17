@@ -29,15 +29,23 @@ class KFilter():
 		self._client = client or get_global_client()
 		self._key = f"{prefix}:{id(self)}"
 		self._valid = asyncio.Event()
-		self.ensure_valid = self._valid.wait
+		self._deleted = asyncio.Event()
 	
 
 	def __del__(self) -> None:
 		"""
 		Delete entry in redis
 		"""
+		self._deleted.set()
 		self._valid.clear()
-		asyncio.create_task(self._client.delete(self._key))
+		coro = self._client.delete(self._key)
+		try:
+			asyncio.create_task(coro)
+		except RuntimeError:
+			try:
+				asyncio.run(coro)
+			except RuntimeError:
+				pass
 	
 
 	def _validate(self, fut= None):
@@ -72,11 +80,23 @@ class KFilter():
 		return kf
 	
 
+	async def ensure_valid(self):
+		"""
+		Verify that the filter is alive and valid
+		Block until it is and return True, or return
+		False if already deleted
+		"""
+		if self._deleted.is_set():
+			return False
+		return await self._valid.wait()
+	
+
 	async def add(self, obj, pipe= None) -> None:
 		"""
 		Add object to the topk
 		"""
-		await self.ensure_valid()
+		if not await self.ensure_valid():
+			return
 		client = pipe or self._client
 		await client.topk().add(self._key, obj)
 	
@@ -86,7 +106,8 @@ class KFilter():
 		Return a dictionary of elements and their 
 		respective counts
 		"""
-		await self.ensure_valid()
+		if not await self.ensure_valid():
+			return {}
 		ret = dict()
 		l = await self._client.topk().list(self._key, True)
 		for i in range(0, len(l), 2):
@@ -98,7 +119,8 @@ class KFilter():
 		"""
 		Check if obj is in top k elements
 		"""
-		await self.ensure_valid()
+		if not await self.ensure_valid():
+			return False
 		return bool(await self._client.topk().query(self._key, obj)[0])
 
 
