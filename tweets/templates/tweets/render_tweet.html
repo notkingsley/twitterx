@@ -1,7 +1,12 @@
 {% load tweet_tags %}
 
 {% if tweet.is_retweet %}
-{% render_retweet tweet user with_menu %}
+	{% render_retweet tweet user with_menu %}
 {% else %}
-{% render_single_tweet tweet user with_menu %}
+	{% if as_reply and tweet.is_reply %}
+		<div class="card bg-transparent">
+			{% render_tweet_head tweet.in_reply_to user with_menu %}
+		</div>
+	{% endif %}
+	{% render_single_tweet tweet user with_menu %}
 {% endif %}

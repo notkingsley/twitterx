@@ -1,15 +1,17 @@
 from django import template
 from django.utils import timezone
-from django.urls import reverse
 
 register = template.Library()
 
 @register.inclusion_tag("tweets/render_tweet.html")
-def render_tweet(tweet, user, with_menu= False):
+def render_tweet(tweet, user, with_menu= False, as_reply= False):
 	"""
 	Render the tweet appropriately, including the retweet if any
+	If as_reply is True and tweet is a reply, it is rendered as 
+	a reply
 	"""
 	return {
+		"as_reply": as_reply,
 		"tweet": tweet,
 		"user": user,
 		"with_menu": with_menu,
@@ -17,11 +19,13 @@ def render_tweet(tweet, user, with_menu= False):
 
 
 @register.inclusion_tag("tweets/render_multiple_tweets.html")
-def render_multiple_tweets(tweets, user, with_menu= False):
+def render_multiple_tweets(tweets, user, with_menu= False, as_reply= False):
 	"""
 	Render an iterable of tweets, considering any possible retweets
+	If as_reply is True, replies are rendered as replies
 	"""
 	return {
+		"as_reply": as_reply,
 		"tweets": tweets,
 		"user": user,
 		"with_menu": with_menu,

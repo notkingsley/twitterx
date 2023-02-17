@@ -7,5 +7,5 @@ Tweets with replies by {{ user.get_full_name }}
 {% endblock title %}
 
 {% block tweets %}
-{% render_multiple_tweets user.tweets.all request.user with_menu=True %}
+{% render_multiple_tweets user.tweets.all request.user with_menu=True as_reply=True %}
 {% endblock tweets %}

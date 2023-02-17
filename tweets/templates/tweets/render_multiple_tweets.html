@@ -4,7 +4,7 @@
 	<hr>
 	{% for tweet in tweets %}
 	<div class="row">
-		{% render_tweet tweet user with_menu %}
+		{% render_tweet tweet user with_menu as_reply %}
 	</div>
 	<br>
 	{% empty %}
