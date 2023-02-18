@@ -7,9 +7,11 @@ from .trend import Trend
 
 
 global_intervals = [
-	datetime.timedelta(seconds= 3),
-	datetime.timedelta(seconds= 5),
 	datetime.timedelta(seconds= 10),
+	datetime.timedelta(minutes= 1),
+	datetime.timedelta(minutes= 4),
+	datetime.timedelta(minutes= 15),
+	datetime.timedelta(hours= 1),
 ]
 
 class Listener():
