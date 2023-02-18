@@ -3,49 +3,17 @@ from collections import defaultdict
 from typing import Type
 import datetime
 
-from .kstructures import KQueue
-from .clock import Clock
 from .enzymes import BaseEnzyme
+from .eventframe import EventFrame
+from .kstructures import KQueue
 
 
-class EventFrame():
+class TrendFrame(EventFrame):
 	"""
-	Manage a clock and a KQueue to represent concrete handle on
-	the most frequent set of events that have happened in, say, 
-	the last 4 hours
-
-	This is a thin wrapper around KQueues, expects similar
-	arguments and provides a similar interface
+	An EventFrame with KQueues as underlying queues
+	Useful for determining trending items
 	"""
-
-	def __init__(self, kqueue: KQueue, size, interval) -> None:
-		"""
-		Use make() to create EventFrames
-		"""
-		self._queue = kqueue
-		self.interval = interval
-		self._clock = Clock(self._queue.signal, self.interval / size)
-		self.add = self._queue.add
-		self.get = self._queue.get
-		self.check = self._queue.check
-		self.stop = self._clock.stop
-		self._clock.start()
-	
-
-	def __del__(self) -> None:
-		self._clock.stop()
-	
-
-	@classmethod
-	async def make(cls, size, interval, **kwargs):
-		"""
-		Make a new EventFrame. kwargs are forwarded to the
-		underlying kqueue
-		size is the duplicity (more means less variance from 
-		exact data interval seconds ago, but also means more memory)
-		"""
-		kq = await KQueue.make(maxlen=size, **kwargs)
-		return EventFrame(kq, size, interval)
+	queue_class = KQueue
 
 
 class Trend():
@@ -67,7 +35,7 @@ class Trend():
 		Use make() to create Trend objects
 		"""
 		self._enzyme = enzyme_class()
-		self._frames: list[EventFrame]
+		self._frames: list[TrendFrame]
 	
 
 	def __del__(self):
@@ -89,7 +57,7 @@ class Trend():
 	):
 		t = Trend(enzyme_class)
 		t._frames = [
-			await EventFrame.make(
+			await TrendFrame.make(
 				duplicity,
 				i.seconds,
 				**kwargs
