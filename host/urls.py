@@ -4,6 +4,7 @@ from django.conf.urls.static import static
 from django.conf import settings
 
 urlpatterns = [
+    path("", include("feeds.urls")),
     path("", include("profiles.urls")),
     path("", include("tweets.urls")),
     path("", include("twitterx.urls")),

@@ -9,8 +9,9 @@ class FeedsConfig(AppConfig):
 
 	def ready(self) -> None:
 		from . import signals
+		from .core import loop
 
-		signals.start()
+		loop.start()
 
 		@receiver(post_save, sender= "tweets.Tweet", dispatch_uid= "new_tweet", weak= False)
 		def new_tweet(sender, **kwargs):

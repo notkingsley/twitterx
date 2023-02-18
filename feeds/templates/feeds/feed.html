@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% load tweet_tags %}
+
+<div>
+	<h2 class="centralize-50">
+		Trending
+	</h2>
+	<div>
+		{% render_multiple_tweets tweets request.user with_menu=True}
+	</div>
+</div>
