@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 import asyncio
 
-from .client import get_global_client
+from feeds.core.client import get_global_client
 
 
 class RedisObject(ABC):
@@ -66,5 +66,9 @@ class RedisObject(ABC):
 	
 
 	@abstractmethod
-	async def get(self, obj, pipe= None):
+	async def get(self):
 		...
+
+
+class InvalidRedisObject(RuntimeError):
+	pass
