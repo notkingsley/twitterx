@@ -7,6 +7,8 @@ import datetime
 
 from feeds.core.listeners import (
 	Listener,
+	keyword_trend_listener,
+	keyword_volume_listener,
 	tag_trend_listener,
 	tag_volume_listener,
 	tweet_trend_listener,
@@ -62,7 +64,7 @@ def get_trending_users(n= 20, use_cache= True) -> list[str]:
 
 
 def get_trending_keywords(n= 20, use_cache= True) -> list[str]:
-	...
+	return _resolve_with_cache(keyword_trend_listener, n, use_cache= use_cache)
 
 
 def get_tweets_volume(tweets: list[int], use_cache= True) -> list[int]:
@@ -78,4 +80,4 @@ def get_users_volume(users: list[str], use_cache= True) -> list[int]:
 
 
 def get_keywords_volume(keywords: list[str], use_cache= True) -> list[int]:
-	...
+	return _resolve_with_cache(keyword_volume_listener, keywords, use_cache= use_cache)

@@ -86,12 +86,6 @@ class KeywordEnzyme(BaseEnzyme):
 	name = "keyword"
 
 	def digest(self, event: BaseEvent) -> list:
-		return []
-
-
-all_enzymes: list[BaseEnzyme] = [
-	TweetIdEnzyme,
-	UserIdEnzyme,
-	TagEnzyme,
-	KeywordEnzyme,
-]
+		if not isinstance(event, TweetEvent):
+			return []
+		return event.keywords

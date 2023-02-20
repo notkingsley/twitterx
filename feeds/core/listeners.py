@@ -4,6 +4,7 @@ from typing import Type
 from feeds.core.client import get_pipe
 from feeds.core.enzymes import (
 	BaseEnzyme,
+	KeywordEnzyme,
 	TagEnzyme, 
 	TweetIdEnzyme,
 	UserIdEnzyme,
@@ -88,11 +89,15 @@ trend_kwargs = {"intervals": global_trend_intervals}
 
 volume_kwargs = {"interval": global_volume_interval}
 
+keyword_trend_listener = Listener(Trend, KeywordEnzyme, **trend_kwargs)
+
 tag_trend_listener = Listener(Trend, TagEnzyme, **trend_kwargs)
 
 tweet_trend_listener = Listener(Trend, TweetIdEnzyme, **trend_kwargs)
 
 user_trend_listener = Listener(Trend, UserIdEnzyme, **trend_kwargs)
+
+keyword_volume_listener = Listener(TrendVolume, KeywordEnzyme, **volume_kwargs)
 
 tag_volume_listener = Listener(TrendVolume, TagEnzyme, **volume_kwargs)
 
@@ -101,9 +106,11 @@ tweet_volume_listener = Listener(TrendVolume, TweetIdEnzyme, **volume_kwargs)
 user_volume_listener = Listener(TrendVolume, UserIdEnzyme, **volume_kwargs)
 
 all_listeners = [
+	keyword_trend_listener,
 	tag_trend_listener,
 	tweet_trend_listener,
 	user_trend_listener,
+	keyword_volume_listener,
 	tag_volume_listener,
 	tweet_volume_listener,
 	user_volume_listener,

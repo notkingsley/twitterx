@@ -24,6 +24,7 @@ class TweetEvent(BaseEvent):
 		retweet_user_id= None,
 		tags= [],
 		mentions_id= [],
+		keywords= [],
 	) -> None:
 		self.text = content
 		self.tweet_id = tweet_id
@@ -34,6 +35,7 @@ class TweetEvent(BaseEvent):
 		self.retweet_user_id = retweet_user_id
 		self.tags = tags
 		self.mentions_id = mentions_id
+		self.keywords = keywords
 	
 
 	def is_reply(self) -> bool:

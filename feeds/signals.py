@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 
-from .core.event import TweetEvent
-from .core.string import extract_mentions, extract_tags
+from feeds.core.event import TweetEvent
+from feeds.core.string import extract_keywords, extract_mentions, extract_tags
 
 
 def mentions_to_id(mentions: list[str]):
@@ -34,5 +34,6 @@ def register_tweet_event(instance):
 	
 	d["tags"] = extract_tags(instance.text)
 	d["mentions_id"] = mentions_to_id(extract_mentions(instance.text))
+	d["keywords"] = extract_keywords(instance.text)
 	
 	loop.call_soon_threadsafe(queue.put_nowait, TweetEvent(**d))

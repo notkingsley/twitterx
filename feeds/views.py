@@ -21,9 +21,4 @@ class Feed(mixins.LoginRequiredMixin, generic.ListView):
 
 	def get_queryset(self):
 		tweets = fetch.get_trending_tweets()
-		users = fetch.get_trending_users()
-		tags = fetch.get_trending_tags()
-		print("tweets: ", tweets, fetch.get_tweets_volume(tweets))
-		print("users: ", users, fetch.get_users_volume(users))
-		print("tags: ", tags, fetch.get_tags_volume(tags))
 		return Tweet.objects.filter(pk__in= tweets)
