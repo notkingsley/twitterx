@@ -1,28 +1,18 @@
-import datetime
 from typing import Type
 
 from feeds.core.client import get_pipe
-from feeds.core.enzymes import (
-	BaseEnzyme,
-	KeywordEnzyme,
-	TagEnzyme, 
-	TweetIdEnzyme,
-	UserIdEnzyme,
-)
 from feeds.core.event import BaseEvent
-from feeds.core.trend import Trend
-from feeds.core.volume import TrendVolume
-
-
-global_trend_intervals = [
-	datetime.timedelta(seconds= 10),
-	datetime.timedelta(minutes= 1),
-	datetime.timedelta(minutes= 4),
-	datetime.timedelta(minutes= 15),
-	datetime.timedelta(hours= 1),
-]
-
-global_volume_interval = datetime.timedelta(hours= 60)
+from feeds.core.formulas import (
+	BaseFormula,
+	KeywordTrendFormula,
+	KeywordVolumeFormula,
+	TagTrendFormula,
+	TagVolumeFormula,
+	TweetTrendFormula,
+	TweetVolumeFormula,
+	UserTrendFormula,
+	UserVolumeFormula,
+)
 
 
 class Listener():
@@ -32,11 +22,9 @@ class Listener():
 	keywords and another for mentions volume
 	"""
 
-	def __init__(self, measure_class, enzyme_class: Type[BaseEnzyme], **kwargs) -> None:
-		self._base_class = measure_class
-		self._enzyme_class = enzyme_class
+	def __init__(self, formula: Type[BaseFormula]) -> None:
+		self._f = formula()
 		self._base = None
-		self.kwargs = kwargs
 	
 
 	def __del__(self):
@@ -58,7 +46,10 @@ class Listener():
 		Start the listener to begin accepting Events
 		"""
 		self.stop_listen()
-		self._base = await self._base_class.make(self._enzyme_class, **self.kwargs)
+		self._base = await self._f.measure_class.make(
+			self._f.enzyme_class,
+			**self._f.get_kwargs()
+		)
 	
 
 	async def notify(self, event: BaseEvent, pipe= None):
@@ -85,25 +76,21 @@ class Listener():
 		return await self._base.fetch(*args)
 
 
-trend_kwargs = {"intervals": global_trend_intervals}
+keyword_trend_listener = Listener(KeywordTrendFormula)
 
-volume_kwargs = {"interval": global_volume_interval}
+tag_trend_listener = Listener(TagTrendFormula)
 
-keyword_trend_listener = Listener(Trend, KeywordEnzyme, **trend_kwargs)
+tweet_trend_listener = Listener(TweetTrendFormula)
 
-tag_trend_listener = Listener(Trend, TagEnzyme, **trend_kwargs)
+user_trend_listener = Listener(UserTrendFormula)
 
-tweet_trend_listener = Listener(Trend, TweetIdEnzyme, **trend_kwargs)
+keyword_volume_listener = Listener(KeywordVolumeFormula)
 
-user_trend_listener = Listener(Trend, UserIdEnzyme, **trend_kwargs)
+tag_volume_listener = Listener(TagVolumeFormula)
 
-keyword_volume_listener = Listener(TrendVolume, KeywordEnzyme, **volume_kwargs)
+tweet_volume_listener = Listener(TweetVolumeFormula)
 
-tag_volume_listener = Listener(TrendVolume, TagEnzyme, **volume_kwargs)
-
-tweet_volume_listener = Listener(TrendVolume, TweetIdEnzyme, **volume_kwargs)
-
-user_volume_listener = Listener(TrendVolume, UserIdEnzyme, **volume_kwargs)
+user_volume_listener = Listener(UserVolumeFormula)
 
 all_listeners = [
 	keyword_trend_listener,
