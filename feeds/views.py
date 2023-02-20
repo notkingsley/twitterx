@@ -3,9 +3,9 @@ from django.urls import reverse_lazy
 from django.contrib.auth import mixins
 
 from tweets.models import Tweet
-from .core.fetch import get_trending_tweets
+from feeds.core import fetch
 
-# TODO develop framework to produce volume of trends
+
 # TODO write the tweet feeder
 
 LOGIN_URL = reverse_lazy("users:login")
@@ -20,6 +20,10 @@ class Feed(mixins.LoginRequiredMixin, generic.ListView):
 	redirect_field_name = REDIRECT_FIELD_NAME
 
 	def get_queryset(self):
-		t = get_trending_tweets()
-		print(t)
-		return Tweet.objects.filter(pk__in= t)
+		tweets = fetch.get_trending_tweets()
+		users = fetch.get_trending_users()
+		tags = fetch.get_trending_tags()
+		print("tweets: ", tweets, fetch.get_tweets_volume(tweets))
+		print("users: ", users, fetch.get_users_volume(users))
+		print("tags: ", tags, fetch.get_tags_volume(tags))
+		return Tweet.objects.filter(pk__in= tweets)

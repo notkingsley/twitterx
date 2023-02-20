@@ -4,14 +4,12 @@ the event loop
 """
 
 import asyncio
-import atexit
 import os
 import signal
 import threading
 
-from .client import get_global_client
-from .clock import Clock
-from .listener import listener
+from feeds.core.clock import Clock
+from feeds.core.listeners import notify_all, start_all, stop_all
 
 
 loop: asyncio.AbstractEventLoop = None
@@ -62,24 +60,6 @@ def start():
 	ready.wait()
 
 
-@atexit.register
-def exit():
-	"""
-	Close connection
-	May not be closed earlier because some kfilters still
-	establish connections after the loop closes normally
-	"""
-	
-	coro = get_global_client().close()
-	try:
-		asyncio.create_task(coro)
-	except RuntimeError:
-		try:
-			asyncio.run(coro)
-		except RuntimeError:
-			pass
-
-
 def entry(ready: threading.Event, quit: threading.Event):
 	"""
 	This runs in another thread, initializes an asyncio loop,
@@ -93,7 +73,7 @@ def entry(ready: threading.Event, quit: threading.Event):
 		"""
 
 		try:
-			await listener.listen()
+			await start_all()
 
 			global loop, queue
 			loop = asyncio.get_running_loop()
@@ -103,14 +83,14 @@ def entry(ready: threading.Event, quit: threading.Event):
 			while True:
 				try:
 					event = await asyncio.wait_for(queue.get(), 1)
-					asyncio.create_task(listener.notify(event))
+					asyncio.create_task(notify_all(event))
 
 				except asyncio.TimeoutError:
 					if quit.is_set():
 						break
 
 		finally:
-			listener.stop_listen()
+			stop_all()
 			await asyncio.gather(*Clock._tasks)
 	
 	asyncio.run(main())

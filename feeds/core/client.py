@@ -1,3 +1,5 @@
+import asyncio
+import atexit
 from typing import Type
 import redis.asyncio as redis
 
@@ -14,5 +16,23 @@ def get_global_client() -> redis.Redis:
 	return _client
 
 
-def get_pipe() -> Type[redis.Redis.pipeline]:
+def get_pipe():
 	return get_global_client().pipeline()
+
+
+@atexit.register
+def exit():
+	"""
+	Close connection
+	May not be closed earlier because some kfilters still
+	establish connections after the loop closes normally
+	"""
+	
+	coro = get_global_client().close()
+	try:
+		asyncio.create_task(coro)
+	except RuntimeError:
+		try:
+			asyncio.run(coro)
+		except RuntimeError:
+			pass

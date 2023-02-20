@@ -44,6 +44,8 @@ class CMSketch(RedisObject):
 		"""
 		if not await self.ensure_valid():
 			raise InvalidRedisObject
+		if not objs:
+			return []
 		return await get_global_client().cms().query(self._key, *objs)
 
 

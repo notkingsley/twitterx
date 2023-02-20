@@ -3,7 +3,7 @@ import asyncio
 from collections import deque
 from typing import Type
 
-from .redis_object import RedisObject
+from feeds.core.redis_object import RedisObject
 
 
 class AutoQueue(ABC):
@@ -45,7 +45,7 @@ class AutoQueue(ABC):
 				await r.add(obj, pipe)
 	
 
-	async def get(self) -> dict:
+	async def get(self):
 		"""
 		Get from oldest RedisObject in queue
 		"""
