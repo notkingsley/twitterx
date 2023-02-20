@@ -76,6 +76,14 @@ class Listener():
 		return await self._base.fetch(*args)
 
 
+	def deconstruct(self):
+		"""
+		Collect underlying redis_object keys into a dict
+		and save as json to redis
+		"""
+		return {self._f.deconstruct_key: self._base.deconstruct()}
+
+
 keyword_trend_listener = Listener(KeywordTrendFormula)
 
 tag_trend_listener = Listener(TagTrendFormula)
@@ -128,3 +136,8 @@ def stop_all():
 	"""
 	for listener in all_listeners:
 		listener.stop_listen()
+
+
+async def print_deconstruct():
+	for l in all_listeners:
+		print(l.deconstruct())

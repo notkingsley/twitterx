@@ -43,6 +43,7 @@ class BaseFormula(ABC):
 	"""
 	measure_class: Type[Trend | TrendVolume]
 	enzyme_class: BaseEnzyme
+	deconstruct_key: str
 
 	@abstractmethod
 	def get_kwargs(self):
@@ -80,32 +81,32 @@ class UserIdEnzymeFormulaMixin(BaseFormula):
 
 
 class KeywordTrendFormula(TrendFormulaMixin, KeywordEnzymeFormulaMixin):
-	pass
+	deconstruct_key = "keyword_trend"
 
 
 class KeywordVolumeFormula(TrendVolumeFormulaMixin, KeywordEnzymeFormulaMixin):
-	pass
+	deconstruct_key = "keyword_volume"
 
 
 class TagTrendFormula(TrendFormulaMixin, TagEnzymeFormulaMixin):
-	pass
+	deconstruct_key = "tag_trend"
 
 
 class TagVolumeFormula(TrendVolumeFormulaMixin, TagEnzymeFormulaMixin):
-	pass
+	deconstruct_key = "tag_volume"
 
 
 class TweetTrendFormula(TrendFormulaMixin, TweetIdEnzymeFormulaMixin):
-	pass
+	deconstruct_key = "tweet_trend"
 
 
 class TweetVolumeFormula(TrendVolumeFormulaMixin, TweetIdEnzymeFormulaMixin):
-	pass
+	deconstruct_key = "tweet_volume"
 
 
 class UserTrendFormula(TrendFormulaMixin, UserIdEnzymeFormulaMixin):
-	pass
+	deconstruct_key = "user_trend"
 
 
 class UserVolumeFormula(TrendVolumeFormulaMixin, UserIdEnzymeFormulaMixin):
-	pass
+	deconstruct_key = "user_volume"

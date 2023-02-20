@@ -71,3 +71,10 @@ class TrendVolume():
 		Get the count of elements of objs in that order
 		"""
 		return await self._base.get(objs)
+	
+
+	def deconstruct(self):
+		"""
+		Deconstruct to a dictionary
+		"""
+		return {"_base": self._base.deconstruct()}

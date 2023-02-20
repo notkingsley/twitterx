@@ -68,6 +68,13 @@ class RedisObject(ABC):
 	@abstractmethod
 	async def get(self):
 		...
+	
+
+	def deconstruct(self):
+		"""
+		Return the key holding the redis object
+		"""
+		return self._key
 
 
 class InvalidRedisObject(RuntimeError):

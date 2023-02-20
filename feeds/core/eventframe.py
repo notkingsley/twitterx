@@ -47,3 +47,11 @@ class EventFrame(ABC):
 		"""
 		aq = await cls.queue_class.make(maxlen=size, **kwargs)
 		return EventFrame(aq, size, interval)
+	
+
+	def deconstruct(self):
+		"""
+		Deconstruct or take a snapshot of the state
+		of the underlying queue
+		"""
+		return {"_queue": self._queue.deconstruct()}

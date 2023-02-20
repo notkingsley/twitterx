@@ -59,3 +59,10 @@ class AutoQueue(ABC):
 		"""
 		async with self._lock:
 			self._deque.append(await self.object_class.make(**self._params))
+	
+
+	def deconstruct(self):
+		"""
+		Deconstruct each RedisObject in the deque to a dict
+		"""
+		return {"_deque": [r.deconstruct() for r in self._deque]}

@@ -91,3 +91,10 @@ class Trend():
 			key= lambda item: item[1],
 			reverse= True,
 		)][:k]
+	
+
+	def deconstruct(self):
+		"""
+		Deconstruct each of the TrendFrames into a dict
+		"""
+		return {"_frames": [f.deconstruct() for f in self._frames]}
