@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 import asyncio
 
+import ulid
+
 from feeds.core.client import get_global_client
 
 
@@ -15,7 +17,7 @@ class RedisObject(ABC):
 		Initialize internal variables. This does not create redis object
 		Use make() instead
 		"""
-		self._key = f"{prefix}:{id(self)}"
+		self._key = f"{prefix}:{ulid.new().str}"
 		self._valid = asyncio.Event()
 		self._deleted = asyncio.Event()
 
