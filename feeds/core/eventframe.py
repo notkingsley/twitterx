@@ -33,10 +33,6 @@ class EventFrame(ABC):
 		self._clock.start()
 	
 
-	def __del__(self) -> None:
-		self._clock.stop()
-	
-
 	@classmethod
 	async def make(cls, size, interval, **kwargs):
 		"""

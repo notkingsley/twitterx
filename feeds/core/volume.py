@@ -3,7 +3,7 @@ from typing import Type
 
 from feeds.core.cmsketch import CMQueue
 from feeds.core.eventframe import EventFrame
-from feeds.core.enzymes import BaseEnzyme
+from feeds.core.enzymes import *
 
 
 class BaseTrendVolume(EventFrame):
@@ -30,10 +30,6 @@ class TrendVolume():
 		"""
 		self._enzyme = enzyme_class()
 		self._base: BaseTrendVolume
-	
-
-	def __del__(self):
-		self.terminate()
 	
 
 	def terminate(self):
@@ -80,6 +76,7 @@ class TrendVolume():
 		"""
 		v = TrendVolume(globals()[obj["enzyme_class"]])
 		v._base = await BaseTrendVolume.construct(obj["_base"])
+		return v
 	
 
 	def deconstruct(self):

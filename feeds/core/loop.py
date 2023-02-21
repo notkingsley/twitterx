@@ -9,7 +9,7 @@ import signal
 import threading
 
 from feeds.core.clock import Clock
-from feeds.core.listeners import notify_all, start_all, stop_all
+from feeds.core.listen import notify_all, start_all, stop_all
 
 
 loop: asyncio.AbstractEventLoop = None
@@ -74,9 +74,6 @@ def entry(ready: threading.Event, quit: threading.Event):
 
 		try:
 			await start_all()
-			from .listeners import print_deconstruct
-			c = Clock(print_deconstruct, 3)
-			c.start()
 
 			global loop, queue
 			loop = asyncio.get_running_loop()
@@ -93,7 +90,7 @@ def entry(ready: threading.Event, quit: threading.Event):
 						break
 
 		finally:
-			stop_all()
+			await stop_all()
 			await asyncio.gather(*Clock._tasks)
 	
 	asyncio.run(main())

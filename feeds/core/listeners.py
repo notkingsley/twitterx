@@ -27,10 +27,6 @@ class Listener():
 		self._base = None
 	
 
-	def __del__(self):
-		self.stop_listen()
-
-
 	def stop_listen(self):
 		"""
 		Stop all underlying tasks. This must be called so the event loop
@@ -118,34 +114,3 @@ all_listeners = [
 	tweet_volume_listener,
 	user_volume_listener,
 ]
-
-
-async def start_all():
-	"""
-	Call listen on all listeners
-	"""
-	for listener in all_listeners:
-		await listener.listen()
-
-
-async def notify_all(event: BaseEvent):
-	"""
-	Notify all listeners of event
-	"""
-	pipe = get_pipe()
-	for listener in all_listeners:
-		await listener.notify(event, pipe)
-	await pipe.execute()
-
-
-def stop_all():
-	"""
-	Kill all listeners. May very well be restarted
-	"""
-	for listener in all_listeners:
-		listener.stop_listen()
-
-
-async def print_deconstruct():
-	for l in all_listeners:
-		print(l.deconstruct())

@@ -24,7 +24,7 @@ class AutoQueue(ABC):
 		The RedisObject is not guaranteed to be ready after this,
 		use make() instead
 		"""
-		self._deque: deque[Type[RedisObject]] = deque(maxlen= maxlen)
+		self._deque: deque[RedisObject] = deque(maxlen= maxlen)
 		self._params = kwargs
 		self._lock = asyncio.Lock()
 	
@@ -57,6 +57,8 @@ class AutoQueue(ABC):
 		"""
 		Create a new RedisObject, discarding any overflows
 		"""
+		if len(self._deque) == self._deque.maxlen:
+			await self._deque[0].delete()
 		async with self._lock:
 			self._deque.append(await self.object_class.make(**self._params))
 	
@@ -66,9 +68,11 @@ class AutoQueue(ABC):
 		"""
 		Construct an autoqueue from an old autoqueue state
 		"""
-		aq = AutoQueue(maxlen= obj["maxlen"], **obj["_params"])
+		aq = cls(maxlen= obj["maxlen"], **obj["_params"])
 		async with aq._lock:
-			aq._deque.extend(await cls.object_class.construct(r) for r in obj["_deque"])
+			for r in obj["_deque"]:
+				aq._deque.append(await cls.object_class.construct(r))
+		return aq
 
 	
 
@@ -80,4 +84,4 @@ class AutoQueue(ABC):
 			"_deque": [r.deconstruct() for r in self._deque],
 			"maxlen": self._deque.maxlen,
 			"_params": self._params,
-			}
+		}

@@ -39,10 +39,6 @@ class Trend():
 		self._frames: list[TrendFrame]
 	
 
-	def __del__(self):
-		self.terminate()
-	
-
 	def terminate(self):
 		for f in self._frames:
 			f.stop()
@@ -102,6 +98,7 @@ class Trend():
 		"""
 		t = Trend(globals()[obj["enzyme_class"]])
 		t._frames = [await TrendFrame.construct(f) for f in obj["_frames"]]
+		return t
 
 
 	def deconstruct(self):

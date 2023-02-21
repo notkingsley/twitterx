@@ -22,22 +22,6 @@ class RedisObject(ABC):
 		self._deleted = asyncio.Event()
 
 
-	def __del__(self) -> None:
-		"""
-		Delete entry in redis
-		"""
-		self._deleted.set()
-		self._valid.clear()
-		coro = get_global_client().delete(self._key)
-		try:
-			asyncio.create_task(coro)
-		except RuntimeError:
-			try:
-				asyncio.run(coro)
-			except RuntimeError:
-				pass
-
-
 	def _validate(self, fut= None):
 		"""
 		Signal that the object is stored in redis
@@ -92,6 +76,16 @@ class RedisObject(ABC):
 		Return the key holding the redis object
 		"""
 		return self._key
+	
+
+	async def delete(self):
+		"""
+		Delete the entry in redis. This method must 
+		called explicitly to free memory
+		"""
+		self._deleted.set()
+		self._valid.clear()
+		await get_global_client().delete(self._key)
 	
 
 async def _check_exists(key):
