@@ -61,8 +61,23 @@ class AutoQueue(ABC):
 			self._deque.append(await self.object_class.make(**self._params))
 	
 
+	@classmethod
+	async def construct(cls, obj: dict):
+		"""
+		Construct an autoqueue from an old autoqueue state
+		"""
+		aq = AutoQueue(maxlen= obj["maxlen"], **obj["_params"])
+		async with aq._lock:
+			aq._deque.extend(await cls.object_class.construct(r) for r in obj["_deque"])
+
+	
+
 	def deconstruct(self):
 		"""
 		Deconstruct each RedisObject in the deque to a dict
 		"""
-		return {"_deque": [r.deconstruct() for r in self._deque]}
+		return {
+			"_deque": [r.deconstruct() for r in self._deque],
+			"maxlen": self._deque.maxlen,
+			"_params": self._params,
+			}

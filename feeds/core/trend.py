@@ -3,9 +3,10 @@ from collections import defaultdict
 from typing import Type
 import datetime
 
-from .enzymes import BaseEnzyme
-from .eventframe import EventFrame
-from .kstructures import KQueue
+# required so we can catch enzyme_class from globals()
+from feeds.core.enzymes import *
+from feeds.core.eventframe import EventFrame
+from feeds.core.kstructures import KQueue
 
 
 class TrendFrame(EventFrame):
@@ -93,8 +94,21 @@ class Trend():
 		)][:k]
 	
 
+	@classmethod
+	async def construct(self, obj: dict):
+		"""
+		An alternative to make() where an object returned by
+		a previous deconstruct() is available
+		"""
+		t = Trend(globals()[obj["enzyme_class"]])
+		t._frames = [await TrendFrame.construct(f) for f in obj["_frames"]]
+
+
 	def deconstruct(self):
 		"""
 		Deconstruct each of the TrendFrames into a dict
 		"""
-		return {"_frames": [f.deconstruct() for f in self._frames]}
+		return {
+			"_frames": [f.deconstruct() for f in self._frames],
+			"enzyme_class": self._enzyme.__class__.__name__,
+		}

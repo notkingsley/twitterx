@@ -76,12 +76,20 @@ class Listener():
 		return await self._base.fetch(*args)
 
 
+	async def construct(self, obj: dict):
+		"""
+		Construct a listener from a dict obj returned by deconstruct()
+		"""
+		self.stop_listen()
+		self._base = await self._f.measure_class.construct(obj["_base"])
+
+
 	def deconstruct(self):
 		"""
 		Collect underlying redis_object keys into a dict
 		and save as json to redis
 		"""
-		return {self._f.deconstruct_key: self._base.deconstruct()}
+		return {"_base": self._base.deconstruct()}
 
 
 keyword_trend_listener = Listener(KeywordTrendFormula)

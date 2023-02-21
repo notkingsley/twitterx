@@ -1,4 +1,3 @@
-import asyncio
 import datetime
 from typing import Type
 
@@ -73,8 +72,21 @@ class TrendVolume():
 		return await self._base.get(objs)
 	
 
+	@classmethod
+	async def construct(cls, obj: dict):
+		"""
+		Alternative version of make when the dictionary returned
+		by a previous version of deconstruct() is available
+		"""
+		v = TrendVolume(globals()[obj["enzyme_class"]])
+		v._base = await BaseTrendVolume.construct(obj["_base"])
+	
+
 	def deconstruct(self):
 		"""
 		Deconstruct to a dictionary
 		"""
-		return {"_base": self._base.deconstruct()}
+		return {
+			"_base": self._base.deconstruct(),
+			"enzyme_class": self._enzyme.__class__.__name__,
+		}

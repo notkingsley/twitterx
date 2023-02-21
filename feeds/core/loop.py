@@ -74,6 +74,9 @@ def entry(ready: threading.Event, quit: threading.Event):
 
 		try:
 			await start_all()
+			from .listeners import print_deconstruct
+			c = Clock(print_deconstruct, 3)
+			c.start()
 
 			global loop, queue
 			loop = asyncio.get_running_loop()

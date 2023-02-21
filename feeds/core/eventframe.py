@@ -1,8 +1,8 @@
 from abc import ABC
 from typing import Type
 
-from .clock import Clock
-from .auto_queue import AutoQueue
+from feeds.core.clock import Clock
+from feeds.core.auto_queue import AutoQueue
 
 
 class EventFrame(ABC):
@@ -49,9 +49,23 @@ class EventFrame(ABC):
 		return EventFrame(aq, size, interval)
 	
 
+	@classmethod
+	async def construct(cls, obj: dict):
+		"""
+		Make an eventframe when the result of a previous deconstruct()
+		is available. Resulting frame will try to refer to that old state's
+		data, which may now be invalid
+		"""
+		aq = await cls.queue_class.construct(obj["_queue"])
+		return EventFrame(aq, aq._deque.maxlen, obj["interval"])
+	
+
 	def deconstruct(self):
 		"""
 		Deconstruct or take a snapshot of the state
 		of the underlying queue
 		"""
-		return {"_queue": self._queue.deconstruct()}
+		return {
+			"_queue": self._queue.deconstruct(),
+			"interval": self.interval,
+		}

@@ -72,11 +72,33 @@ class RedisObject(ABC):
 		...
 	
 
+	@classmethod
+	async def construct(cls, obj: str):
+		"""
+		Bind a RedisObject to an older key
+		"""
+		r = cls(obj)
+		r._key = obj
+
+		if await _check_exists(r._key):
+			r._valid.set()
+		else:
+			r._deleted.set()
+		return r
+	
+
 	def deconstruct(self):
 		"""
 		Return the key holding the redis object
 		"""
 		return self._key
+	
+
+async def _check_exists(key):
+	"""
+	Check that the an object exists at the given key
+	"""
+	return await get_global_client().exists(key)
 
 
 class InvalidRedisObject(RuntimeError):
