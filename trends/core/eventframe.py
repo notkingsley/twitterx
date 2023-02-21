@@ -1,8 +1,8 @@
 from abc import ABC
 from typing import Type
 
-from feeds.core.clock import Clock
-from feeds.core.auto_queue import AutoQueue
+from trends.core.clock import Clock
+from trends.core.auto_queue import AutoQueue
 
 
 class EventFrame(ABC):

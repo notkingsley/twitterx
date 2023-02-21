@@ -4,9 +4,9 @@ Count-min sketch primitives
 
 import asyncio
 
-from feeds.core.client import get_global_client
-from feeds.core.redis_object import RedisObject, InvalidRedisObject
-from feeds.core.auto_queue import AutoQueue
+from trends.core.client import get_global_client
+from trends.core.redis_object import RedisObject, InvalidRedisObject
+from trends.core.auto_queue import AutoQueue
 
 
 class CMSketch(RedisObject):

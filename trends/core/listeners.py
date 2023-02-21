@@ -1,8 +1,8 @@
 from typing import Type
 
-from feeds.core.client import get_pipe
-from feeds.core.event import BaseEvent
-from feeds.core.formulas import (
+from trends.core.client import get_pipe
+from trends.core.event import BaseEvent
+from trends.core.formulas import (
 	BaseFormula,
 	KeywordTrendFormula,
 	KeywordVolumeFormula,

@@ -5,9 +5,9 @@ top-k objects directly
 
 import asyncio
 
-from feeds.core.client import get_global_client
-from feeds.core.redis_object import RedisObject
-from feeds.core.auto_queue import AutoQueue
+from trends.core.client import get_global_client
+from trends.core.redis_object import RedisObject
+from trends.core.auto_queue import AutoQueue
 
 __all__ = ["KQueue"]
 

@@ -1,9 +1,9 @@
 import datetime
 from typing import Type
 
-from feeds.core.cmsketch import CMQueue
-from feeds.core.eventframe import EventFrame
-from feeds.core.enzymes import *
+from trends.core.cmsketch import CMQueue
+from trends.core.eventframe import EventFrame
+from trends.core.enzymes import *
 
 
 class BaseTrendVolume(EventFrame):

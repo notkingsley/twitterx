@@ -1,9 +1,9 @@
 import json
 
-from feeds.core.client import get_global_client, get_pipe
-from feeds.core.clock import Clock
-from feeds.core.listeners import Listener, all_listeners
-from feeds.core.event import BaseEvent
+from trends.core.client import get_global_client, get_pipe
+from trends.core.clock import Clock
+from trends.core.listeners import Listener, all_listeners
+from trends.core.event import BaseEvent
 
 
 async def start_all():

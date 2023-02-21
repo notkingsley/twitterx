@@ -4,9 +4,9 @@ from typing import Type
 import datetime
 
 # required so we can catch enzyme_class from globals()
-from feeds.core.enzymes import *
-from feeds.core.eventframe import EventFrame
-from feeds.core.kstructures import KQueue
+from trends.core.enzymes import *
+from trends.core.eventframe import EventFrame
+from trends.core.kstructures import KQueue
 
 
 class TrendFrame(EventFrame):

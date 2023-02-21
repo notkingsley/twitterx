@@ -3,7 +3,7 @@ import asyncio
 
 import ulid
 
-from feeds.core.client import get_global_client
+from trends.core.client import get_global_client
 
 
 class RedisObject(ABC):

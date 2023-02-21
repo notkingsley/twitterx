@@ -5,7 +5,7 @@ Functions to retreive trends from listeners
 import asyncio
 import datetime
 
-from feeds.core.listeners import (
+from trends.core.listeners import (
 	Listener,
 	keyword_trend_listener,
 	keyword_volume_listener,
@@ -27,7 +27,7 @@ def _get_from_listener(listener, *args):
 	"""
 	Schedule request in the event loop and wait for the result
 	"""
-	from feeds.core.loop import loop
+	from trends.core.loop import loop
 	
 	return asyncio.run_coroutine_threadsafe(
 		listener.fetch(*args),

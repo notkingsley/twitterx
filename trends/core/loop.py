@@ -8,8 +8,8 @@ import os
 import signal
 import threading
 
-from feeds.core.clock import Clock
-from feeds.core.listen import notify_all, start_all, stop_all
+from trends.core.clock import Clock
+from trends.core.listen import notify_all, start_all, stop_all
 
 
 loop: asyncio.AbstractEventLoop = None

@@ -2,15 +2,15 @@ from abc import ABC, abstractmethod
 import datetime
 from typing import Type
 
-from feeds.core.enzymes import (
+from trends.core.enzymes import (
 	BaseEnzyme,
 	KeywordEnzyme,
 	TagEnzyme, 
 	TweetIdEnzyme,
 	UserIdEnzyme,
 )
-from feeds.core.trend import Trend
-from feeds.core.volume import TrendVolume
+from trends.core.trend import Trend
+from trends.core.volume import TrendVolume
 
 
 __all__ = [

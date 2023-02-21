@@ -3,7 +3,7 @@ import asyncio
 from collections import deque
 from typing import Type
 
-from feeds.core.redis_object import RedisObject
+from trends.core.redis_object import RedisObject
 
 
 class AutoQueue(ABC):

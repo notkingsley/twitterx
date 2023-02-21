@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 
-from feeds.core.event import TweetEvent
-from feeds.core.string import extract_keywords, extract_mentions, extract_tags
+from trends.core.event import TweetEvent
+from trends.core.string import extract_keywords, extract_mentions, extract_tags
 
 
 def mentions_to_id(mentions: list[str]):
@@ -18,7 +18,7 @@ def register_tweet_event(instance):
 	"""
 	Construct and register a TweetEvent
 	"""
-	from .core.loop import loop, queue
+	from trends.core.loop import loop, queue
 	
 	d = dict()
 	d["content"] = instance.text
