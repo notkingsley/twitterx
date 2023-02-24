@@ -10,5 +10,47 @@
 	<div>
 		{% render_multiple_tweets tweets request.user with_menu=True %}
 	</div>
+	<hr>
+	<ul class="list-group" id="trending-tags">
+		{% for tag, volume in trending_tags.items %}
+		<li class="list-group-item d-flex justify-content-between align-items-start">
+			<a href="#">
+				<div class="ms-2 me-auto">
+					<div class="fw-bold">
+						<h4>
+							#{{ tag }}
+						</h4>
+					</div>
+					{{ volume }} tweets
+				</div>
+			</a>
+		</li>
+		{% empty %}
+		<h3>
+			No trending tags found
+		</h3>
+		{% endfor %}
+	</ul>
+	<hr>
+	<ul class="list-group bg-transparent" id="trending-keywords">
+		{% for keyword, volume in trending_keywords.items %}
+		<li class="list-group-item d-flex justify-content-between align-items-start">
+			<a href="#">
+				<div class="ms-2 me-auto">
+					<div class="fw-bold">
+						<h4>
+							{{ keyword }}
+						</h4>
+					</div>
+					{{ volume }} tweets
+				</div>
+			</a>
+		</li>
+		{% empty %}
+		<h3>
+			No trending words found
+		</h3>
+		{% endfor %}
+	</ul>
 </div>
 {% endblock content %}

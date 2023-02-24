@@ -4,9 +4,9 @@ Functions to retreive trends from listeners
 
 import asyncio
 import datetime
+from typing import Any
 
 from trends.core.listeners import (
-	Listener,
 	keyword_trend_listener,
 	keyword_volume_listener,
 	tag_trend_listener,
@@ -18,7 +18,7 @@ from trends.core.listeners import (
 )
 
 
-_cache: dict[Listener: tuple[list, datetime.datetime]] = dict()
+_cache: dict[Any: tuple[list, datetime.datetime]] = dict()
 
 _CACHE_TIMEOUT = datetime.timedelta(seconds= 10)
 
@@ -32,23 +32,23 @@ def _get_from_listener(listener, *args):
 	return asyncio.run_coroutine_threadsafe(
 		listener.fetch(*args),
 		loop,
-	).result(), datetime.datetime.now()
+	).result()
 
 
-def _expired(listener):
+def _expired(args):
 	"""
-	Return True if cache entry for listener has expired
+	Return True if cache entry for args has expired
 	"""
-	return datetime.datetime.now() - _cache[listener][1] > _CACHE_TIMEOUT
+	return datetime.datetime.now() - _cache[args][1] > _CACHE_TIMEOUT
 
 
-def _resolve_with_cache(listener, *args, use_cache= True):
+def _resolve_with_cache(*args, use_cache= True):
 	"""
 	Well, the name says it
 	"""
-	if not _cache.get(listener) or not use_cache or _expired(listener):
-		_cache[listener] = _get_from_listener(listener, *args)
-	return _cache[listener][0]
+	if not _cache.get(args) or not use_cache or _expired(args):
+		_cache[args] = _get_from_listener(*args), datetime.datetime.now()
+	return _cache[args][0]
 
 
 def get_trending_tweets(n= 20, use_cache= True) -> list[int]:
@@ -68,16 +68,16 @@ def get_trending_keywords(n= 20, use_cache= True) -> list[str]:
 
 
 def get_tweets_volume(tweets: list[int], use_cache= True) -> list[int]:
-	return _resolve_with_cache(tweet_volume_listener, tweets, use_cache= use_cache)
+	return _resolve_with_cache(tweet_volume_listener, tuple(tweets), use_cache= use_cache)
 
 
 def get_tags_volume(tags: list[str], use_cache= True) -> list[int]:
-	return _resolve_with_cache(tag_volume_listener, tags, use_cache= use_cache)
+	return _resolve_with_cache(tag_volume_listener, tuple(tags), use_cache= use_cache)
 
 
 def get_users_volume(users: list[str], use_cache= True) -> list[int]:
-	return _resolve_with_cache(user_volume_listener, users, use_cache= use_cache)
+	return _resolve_with_cache(user_volume_listener, tuple(users), use_cache= use_cache)
 
 
 def get_keywords_volume(keywords: list[str], use_cache= True) -> list[int]:
-	return _resolve_with_cache(keyword_volume_listener, keywords, use_cache= use_cache)
+	return _resolve_with_cache(keyword_volume_listener, tuple(keywords), use_cache= use_cache)

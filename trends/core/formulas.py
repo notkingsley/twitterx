@@ -26,11 +26,13 @@ __all__ = [
 
 
 _global_trend_intervals = [
-	datetime.timedelta(seconds= 10),
 	datetime.timedelta(minutes= 1),
 	datetime.timedelta(minutes= 4),
 	datetime.timedelta(minutes= 15),
 	datetime.timedelta(hours= 1),
+	datetime.timedelta(hours= 4),
+	datetime.timedelta(hours= 15),
+	datetime.timedelta(hours= 60),
 ]
 
 _global_volume_interval = datetime.timedelta(hours= 60)
