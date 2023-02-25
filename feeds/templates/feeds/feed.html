@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% load tweet_tags %}
+
+{% block title %}
+Feed | TwitterX
+{% endblock title %}
+
+{% block content %}
+<div class="centralize-75">
+	<h2>
+		Your Feed
+	</h2>
+	<div>
+		{% render_multiple_tweets tweets request.user with_menu=True %}
+	</div>
+</div>
+{% endblock content %}

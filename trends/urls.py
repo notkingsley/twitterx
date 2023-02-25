@@ -4,5 +4,5 @@ from . import views
 
 app_name = "trends"
 urlpatterns = [
-	path("trending/", views.Feed.as_view(), name= "trending"),
+	path("trending/", views.Trending.as_view(), name= "trending"),
 ]
