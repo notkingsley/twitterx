@@ -7,6 +7,13 @@ from django.urls import reverse_lazy
 from tweets.models import Tweet
 from . import models
 
+
+# TODO add reliable way to determine seen tweets and add
+# times to user.feed.seen (front-end work, probably)
+# TODO efficiently merge intervals in user.feed.seen
+# when there isn't an obvious overlap, but no tweet
+# created in-between
+
 LOGIN_URL = reverse_lazy("users:login")
 
 REDIRECT_FIELD_NAME = 'r'

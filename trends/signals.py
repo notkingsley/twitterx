@@ -9,7 +9,7 @@ def mentions_to_id(mentions: list[str]):
 	Tranform a list of potential usernames into user ids, 
 	filtering out invalids
 	"""
-	return [pk for pk in get_user_model().objects.filter(
+	return [str(pk) for pk in get_user_model().objects.filter(
 		username__in= mentions
 	).values_list("pk", flat= True)]
 
