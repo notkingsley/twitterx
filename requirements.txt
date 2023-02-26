@@ -36,6 +36,7 @@ tqdm==4.64.1
 Twisted==22.10.0
 txaio==23.1.1
 typing_extensions==4.5.0
+ulid-py==1.1.0
 uvicorn==0.20.0
 whitenoise==6.3.0
 zope.interface==5.5.2
