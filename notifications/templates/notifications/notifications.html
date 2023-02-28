@@ -17,9 +17,10 @@ Notifications | TwitterX
 		</div>
 	</h2>
 	<hr>
+	{% csrf_token %}
 	{% for message in messages %}
 	<div class="card bg-transparent">
-		<a href="{{ message.link }}" class="text-white">
+		<a href="{{ message.link }}" class="text-white submit-on-click" data-bs-url="{% url 'notifications:click' message.pk %}">
 			<div class="card-body">
 				<div class="row">
 					<div class="col-8" style="width: 90%;">

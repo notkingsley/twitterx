@@ -1,6 +1,7 @@
 from django.views import generic
 from django.contrib.auth import mixins
 from django.urls import reverse_lazy
+from django import http
 
 from . import models
 
@@ -36,3 +37,21 @@ class AllNotifications(Notifications):
 	def get_queryset(self):
 		_ensure_box(self.request.user)
 		return self.request.user.notification_box.messages.all()
+
+
+class Click(mixins.LoginRequiredMixin, generic.View):
+	login_url = LOGIN_URL
+	redirect_field_name = REDIRECT_FIELD_NAME
+
+	def post(self, request, *args, **kwargs):
+		try:
+			msg = models.Message.objects.get(pk= kwargs["pk"])
+		except models.Message.DoesNotExist:
+			return http.HttpResponseBadRequest()
+
+		if msg.box.user != request.user:
+			return http.HttpResponseForbidden()
+		
+		msg.clicked = True
+		msg.save()
+		return http.HttpResponseRedirect(msg.link)
