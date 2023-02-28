@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}
+Notifications | TwitterX
+{% endblock title %}
+
+{% block content %}
+<div class="centralize container">
+	<h2 class="text-end">
+		Notifications
+	</h2>
+	<hr>
+	{% for message in messages %}
+	<div class="card bg-transparent">
+		<a href="{{ message.link }}" class="text-white">
+			<div class="card-body">
+				<h4>
+					{{ message }}
+				</h4>
+			</div>
+		</a>
+	</div>
+	<br>
+	{% empty %}
+	<div>
+		<h3>
+			No Notifications yet.
+		</h3>
+	</div>
+	{% endfor %}
+</div>
+{% endblock content %}
