@@ -10,6 +10,9 @@ class NotificationBox(models.Model):
 		editable= False,
 	)
 
+	def get_new_messages(self):
+		return self.messages.exclude(clicked= True)
+
 
 class Message(models.Model):
 	body = models.CharField(

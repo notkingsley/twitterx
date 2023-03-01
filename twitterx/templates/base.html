@@ -82,6 +82,15 @@
 					  <li>
 						<a href="{% url 'notifications:new' %}" class="nav-link text-white">
 							Notifications
+							{% if user.is_authenticated %}
+							{% with count=user.notification_box.get_new_messages.count %}
+							{% if count %}
+							<span class="badge rounded-pill bg-primary">
+								{{ count }}
+							</span>
+							{% endif %}
+							{% endwith %}
+							{% endif %}
 						</a>
 					  </li>
 					  <li>

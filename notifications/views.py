@@ -29,7 +29,7 @@ class Notifications(mixins.LoginRequiredMixin, generic.ListView):
 
 	def get_queryset(self):
 		_ensure_box(self.request.user)
-		return self.request.user.notification_box.messages.exclude(clicked= True)
+		return self.request.user.notification_box.get_new_messages()
 
 
 class AllNotifications(Notifications):
