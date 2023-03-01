@@ -4,6 +4,7 @@ from django.urls import reverse_lazy
 from django import http
 
 from . import forms, image
+from notifications.signals import notify_follow
 
 # TODO fix invalid form data leaking to template context in EditProfile
 # TODO add in-ui image cropping and allow only square images
@@ -89,6 +90,8 @@ class Follow(mixins.LoginRequiredMixin, generic.View):
 				request.user.follows.remove(user)
 			else:
 				request.user.follows.add(user)
+				notify_follow(user, request.user)
+				
 			return http.HttpResponse(status= 204)
 			
 		except User.DoesNotExist:

@@ -5,6 +5,7 @@ from django.utils import timezone
 from django.urls import reverse_lazy
 
 from . import models
+from notifications.signals import notify_like
 
 
 LOGIN_URL = reverse_lazy("users:login")
@@ -32,6 +33,7 @@ class Like(mixins.LoginRequiredMixin, generic.View):
 			tweet.likes.remove(request.user)
 		else:
 			tweet.likes.add(request.user)
+			notify_like(tweet, request.user)
 
 		tweet.save()
 		return http.HttpResponse(status= 204)

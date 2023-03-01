@@ -15,6 +15,6 @@ class TrendsConfig(AppConfig):
 
 		@receiver(post_save, sender= "tweets.Tweet", dispatch_uid= "new_tweet", weak= False)
 		def new_tweet(sender, **kwargs):
-			# if not kwargs["created"]:
-				# return
+			if not kwargs["created"]:
+				return
 			signals.register_tweet_event(kwargs["instance"])
