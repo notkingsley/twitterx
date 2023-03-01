@@ -11,9 +11,16 @@ Notifications | TwitterX
 	<h2 class="text-end">
 		Notifications
 		<div class="text-muted">
+			{% if all %}
+			<form method="post" action="{% url 'notifications:clear' %}">
+				{% csrf_token %}
+				<input type="submit" value="Clear all" class="btn btn-sm btn-outline-danger">
+			</form>
+			{% else %}
 			<a href="{% url 'notifications:all' %}" class="btn btn-sm btn-outline-secondary">
 				Show all
 			</a>
+			{% endif %}
 		</div>
 	</h2>
 	<hr>
