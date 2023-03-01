@@ -3,9 +3,15 @@ import re
 from django.db.models import signals
 from django.contrib.auth import get_user_model
 
+from . import models
+
 
 def register_all():
-	signals.post_save.connect(_tweet_saved, "tweets.Tweet", dispatch_uid= "n:_tweet_saved")
+	signals.post_save.connect(
+		_tweet_saved,
+		"tweets.Tweet",
+		dispatch_uid= "n:_tweet_saved"
+	)
 
 
 def _tweet_saved(sender, **kwargs):
@@ -24,7 +30,11 @@ def notify_like(tweet, user):
 	"""
 	if tweet.author == user:
 		return
-	print(f"To {tweet.author}: {user} liked your tweet {tweet}. Link: {user.get_absolute_url()}")
+	send_to_box(
+		f"{user} liked your tweet '{tweet}'.",
+		user.get_absolute_url(),
+		tweet.author,
+	)
 
 
 def notify_follow(followed, user):
@@ -33,7 +43,11 @@ def notify_follow(followed, user):
 	"""
 	if followed == user:
 		raise RuntimeError("A user may not follow themself")
-	print(f"To {followed}: {user} started following you. Link: {user.get_absolute_url()}")
+	send_to_box(
+		f"{user} started following you.",
+		user.get_absolute_url(),
+		followed, 
+	)
 
 
 def notify_mentions(tweet):
@@ -50,7 +64,11 @@ def notify_reply(tweet):
 	"""
 	if not tweet.is_reply() or tweet.author == tweet.in_reply_to.author:
 		return
-	print(f"To {tweet.in_reply_to.author}: {tweet.author} replied to your tweet {tweet.in_reply_to}. Link: {tweet.get_absolute_url()}")
+	send_to_box(
+		f"{tweet.author} replied to your tweet '{tweet.in_reply_to}'.",
+		tweet.get_absolute_url(),
+		tweet.in_reply_to.author ,
+	)
 
 
 def notify_retweet(tweet):
@@ -59,7 +77,11 @@ def notify_retweet(tweet):
 	"""
 	if not tweet.is_retweet() or tweet.author == tweet.in_retweet_to.author:
 		return
-	print(f"To {tweet.in_retweet_to.author}: {tweet.author} retweeted your tweet {tweet.in_retweet_to}. Link: {tweet.get_absolute_url()}")
+	send_to_box(
+		f"{tweet.author} retweeted your tweet '{tweet.in_retweet_to}'.",
+		tweet.get_absolute_url(),
+		tweet.in_retweet_to.author,
+	) 
 
 
 def notify_mention(tweet, user):
@@ -68,7 +90,11 @@ def notify_mention(tweet, user):
 	"""
 	if tweet.author == user:
 		return
-	print(f"To {user}: {tweet.author} mentioned you in a tweet. Link: {tweet.get_absolute_url()}")
+	send_to_box(
+		f"{tweet.author} mentioned you in a tweet '{tweet}'.",
+		tweet.get_absolute_url(),
+		user,
+	)
 
 
 def mentions_to_objects(mentions: list[str]):
@@ -84,3 +110,27 @@ def extract_mentions(text: str) -> list[str]:
 	Extract a list of potential mentions from text
 	"""
 	return [s[1:] for s in re.findall(r"@[\w]+", text)]
+
+
+def send_to_box(body, link, user):
+	"""
+	Add a message with body and link to user's 
+	notification box
+	"""
+	_ensure_box(user)
+	models.Message.objects.create(
+		body= body,
+		link= link,
+		box= user.notification_box,
+		clicked= False,
+	)
+
+
+def _ensure_box(user):
+	"""
+	Ensure user has a notification box
+	"""
+	try:
+		user.notification_box
+	except:
+		models.NotificationBox.objects.create(user= user)
