@@ -50,6 +50,19 @@ def notify_follow(followed, user):
 	)
 
 
+def notify_unfollow(unfollowed, user):
+	"""
+	Call when user unfollows unfollowed
+	"""
+	if unfollowed == user:
+		raise RuntimeError("A user may not unfollow themself")
+	send_to_box(
+		f"{user} stopped following you.",
+		user.get_absolute_url(),
+		unfollowed,
+	)
+
+
 def notify_mentions(tweet):
 	"""
 	Notify potential mentions in tweet
