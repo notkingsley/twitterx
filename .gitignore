@@ -1,0 +1,6 @@
+venv/
+*.pyc
+.env
+media/profile_pics/*/
+.vscode/
+staticfiles/
