@@ -144,6 +144,7 @@ MEDIA_ROOT = BASE_DIR / "media/"
 
 MEDIA_URL = "media/"
 
-
-REDIS_HOST = "localhost"
-REDIS_PORT = 6379
+REDIS_URL = os.getenv("REDIS_URL")
+if REDIS_URL:
+    REDIS_HOST = REDIS_URL[:REDIS_URL.rfind(":")]
+    REDIS_PORT = int(REDIS_URL[REDIS_URL.rfind(":") + 1:])
