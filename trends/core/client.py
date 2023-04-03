@@ -1,14 +1,23 @@
 import asyncio
 import atexit
-from typing import Type
 import redis.asyncio as redis
 
+from django.conf import settings
 
-_client = redis.Redis(
-	host= "localhost",
-	port= 6379,
-	decode_responses= True,
-)
+
+ACTIVE = False
+_client = None
+
+host = getattr(settings, "REDIS_HOST", None)
+port = getattr(settings, "REDIS_PORT", None)
+
+if host and port:
+	_client = redis.Redis(
+		host= host,
+		port= port,
+		decode_responses= True,
+	)
+	ACTIVE = True
 
 
 def get_global_client() -> redis.Redis:
@@ -27,7 +36,9 @@ def exit():
 	May not be closed earlier because some kfilters still
 	establish connections after the loop closes normally
 	"""
-	
+	if not ACTIVE:
+		return
+		
 	coro = get_global_client().close()
 	try:
 		asyncio.create_task(coro)

@@ -4,10 +4,13 @@ from django.views import generic
 from django.contrib.auth import get_user_model
 
 from tweets.models import Tweet
-from trends.core import fetch
+from trends.core import ACTIVE, fetch
 
 
-class Trending(generic.ListView):
+class TrendingActive(generic.ListView):
+	"""
+	The Redis client is connected and this app is active
+	"""
 	template_name: str = "trends/trending.html"
 	context_object_name = "tweets"
 
@@ -34,3 +37,16 @@ class Trending(generic.ListView):
 			fetch.get_users_volume(users)
 		)
 		return context
+
+
+class TrendingInactive(generic.TemplateView):
+	"""
+	The Redis client is not connected and this app is inactive
+	"""
+	template_name: str = "trends/trending_inactive.html"
+
+
+if ACTIVE:
+	Trending = TrendingActive
+else:
+	Trending = TrendingInactive

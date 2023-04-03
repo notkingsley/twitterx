@@ -9,12 +9,14 @@ class TrendsConfig(AppConfig):
 
 	def ready(self) -> None:
 		from trends import signals
-		from trends.core import loop
+		from trends.core import ACTIVE, loop
 
-		loop.start()
+		if ACTIVE:
+			loop.start()
 
-		@receiver(post_save, sender= "tweets.Tweet", dispatch_uid= "new_tweet", weak= False)
-		def new_tweet(sender, **kwargs):
-			if not kwargs["created"]:
-				return
-			signals.register_tweet_event(kwargs["instance"])
+			@receiver(post_save, sender= "tweets.Tweet", dispatch_uid= "new_tweet", weak= False)
+			def new_tweet(sender, **kwargs):
+
+				if not kwargs["created"]:
+					return
+				signals.register_tweet_event(kwargs["instance"])
