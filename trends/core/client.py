@@ -19,6 +19,9 @@ if host and port:
 	)
 	ACTIVE = True
 
+# temporarily disable trends app
+ACTIVE = False
+
 
 def get_global_client() -> redis.Redis:
 	global _client

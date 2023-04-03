@@ -1,2 +1,2 @@
 release: python manage.py migrate
-web: gunicorn host.wsgi:application
+web: gunicorn --worker-class gthread --threads 4 host.wsgi --log-file -
